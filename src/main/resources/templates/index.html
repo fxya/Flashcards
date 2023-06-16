@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Flashcards</title>
+    <style>
+        .flashcard {
+            width: 300px;
+            height: 200px;
+            border: 1px solid #000;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .flashcard h3 {
+            margin: 0;
+        }
+    </style>
+    <script>
+        let flashcards = [];
+        let currentIndex = 0;
+
+        function updateFlashcard() {
+            if (flashcards[currentIndex]) {
+                document.getElementById('question').textContent = flashcards[currentIndex].question;
+                document.getElementById('answer').textContent = flashcards[currentIndex].answer;
+            }
+        }
+
+        function nextFlashcard() {
+            if (currentIndex < flashcards.length - 1) {
+                currentIndex++;
+                updateFlashcard();
+            }
+        }
+
+        function prevFlashcard() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateFlashcard();
+            }
+        }
+
+        window.onload = function() {
+            fetch('/flashcards')
+                .then(response => response.json())
+                .then(data => {
+                    flashcards = data;
+                    updateFlashcard();
+                })
+                .catch(error => console.error('Error:', error));
+        };
+    </script>
+</head>
+<body>
+<div class="flashcard">
+    <h3>Question:</h3>
+    <p id="question">Question</p>
+    <h3>Answer:</h3>
+    <p id="answer">Answer</p>
+</div>
+<button onclick="prevFlashcard()">Previous</button>
+<button onclick="nextFlashcard()">Next</button>
+</body>
+</html>
