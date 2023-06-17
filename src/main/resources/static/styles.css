@@ -1,10 +1,24 @@
+.container {
+    display: flex;
+    justify-content: center;
+    flex-direction: column; /* Render buttons below flashcard */
+    align-items: center;
+    min-height: 100vh; /* Full height of the viewport */
+}
+
+.buttoncontainer {
+    display: flex;
+    justify-content: space-between; /* Space buttons evenly */
+    width: 90%; /* Make the button container width responsive */
+    max-width: 300px; /* Max width to maintain readability */
+    padding: 10px;
+}
+
 .flashcard {
     width: 90%; /* Make the flashcard width responsive */
-    max-width: 300px; /* Max width to maintain readability */
-    height: auto; /* Allow the height to adjust to the content */
+    max-width: 500px; /* Max width to maintain readability */
     border: 1px solid #000;
     padding: 10px;
-    margin-bottom: 10px;
     box-sizing: border-box; /* Ensure padding and border are included in the element's total width and height */
     word-wrap: break-word; /* Allow long words to be able to break and wrap onto the next line */
 }

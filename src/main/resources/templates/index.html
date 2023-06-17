@@ -3,50 +3,21 @@
 <head>
     <title>Flashcards</title>
     <link rel="stylesheet" type="text/css" href="/styles.css">
-    <script>
-        let flashcardList = [];
-        let currentIndex = 0;
-
-        function updateFlashcard() {
-            if (flashcardList[currentIndex]) {
-                document.getElementById('question').textContent = flashcardList[currentIndex].question;
-                document.getElementById('answer').textContent = flashcardList[currentIndex].answer;
-            }
-        }
-
-        function nextFlashcard() {
-            if (currentIndex < flashcardList.length - 1) {
-                currentIndex++;
-                updateFlashcard();
-            }
-        }
-
-        function prevFlashcard() {
-            if (currentIndex > 0) {
-                currentIndex--;
-                updateFlashcard();
-            }
-        }
-
-        window.onload = function() {
-            fetch('api/flashcards')
-                .then(response => response.json())
-                .then(data => {
-                    flashcardList = data;
-                    updateFlashcard();
-                })
-                .catch(error => console.error('Error:', error));
-        };
-    </script>
 </head>
 <body>
-<div class="flashcard">
-    <h3>Question:</h3>
-    <p id="question">Loading...</p>
-    <h3>Answer:</h3>
-    <p id="answer">Loading...</p>
+<div class="container">
+    <div class="flashcard">
+        <h3>Question:</h3>
+        <p id="question">Loading...</p>
+        <h3>Answer:</h3>
+        <p id="answer">Loading...</p>
+    </div>
+    <div class="buttoncontainer">
+        <button onclick="prevFlashcard()">Previous</button>
+        <button onclick="nextFlashcard()">Next</button>
+    </div>
 </div>
-<button onclick="prevFlashcard()">Previous</button>
-<button onclick="nextFlashcard()">Next</button>
+<script src="/flashcards.js"></script>
 </body>
+
 </html>
