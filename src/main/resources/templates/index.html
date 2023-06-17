@@ -15,18 +15,18 @@
         }
     </style>
     <script>
-        let flashcards = [];
+        let flashcardList = [];
         let currentIndex = 0;
 
         function updateFlashcard() {
-            if (flashcards[currentIndex]) {
-                document.getElementById('question').textContent = flashcards[currentIndex].question;
-                document.getElementById('answer').textContent = flashcards[currentIndex].answer;
+            if (flashcardList[currentIndex]) {
+                document.getElementById('question').textContent = flashcardList[currentIndex].question;
+                document.getElementById('answer').textContent = flashcardList[currentIndex].answer;
             }
         }
 
         function nextFlashcard() {
-            if (currentIndex < flashcards.length - 1) {
+            if (currentIndex < flashcardList.length - 1) {
                 currentIndex++;
                 updateFlashcard();
             }
@@ -43,7 +43,7 @@
             fetch('/flashcards')
                 .then(response => response.json())
                 .then(data => {
-                    flashcards = data;
+                    flashcardList = data;
                     updateFlashcard();
                 })
                 .catch(error => console.error('Error:', error));
@@ -53,9 +53,9 @@
 <body>
 <div class="flashcard">
     <h3>Question:</h3>
-    <p id="question">Question</p>
+    <p id="question">Loading...</p>
     <h3>Answer:</h3>
-    <p id="answer">Answer</p>
+    <p id="answer">Loading...</p>
 </div>
 <button onclick="prevFlashcard()">Previous</button>
 <button onclick="nextFlashcard()">Next</button>
