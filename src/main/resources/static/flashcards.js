@@ -5,6 +5,7 @@ function updateFlashcard() {
     if (flashcardList[currentIndex]) {
         document.getElementById('question').textContent = flashcardList[currentIndex].question;
         document.getElementById('answer').textContent = flashcardList[currentIndex].answer;
+        document.getElementById('answer').style.display = 'none'; // Hide the answer by default
     }
 }
 
@@ -20,6 +21,10 @@ function prevFlashcard() {
         currentIndex--;
         updateFlashcard();
     }
+}
+
+function revealAnswer() {
+    document.getElementById('answer').style.display = 'block';
 }
 
 window.onload = function() {
