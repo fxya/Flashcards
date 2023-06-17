@@ -1,0 +1,14 @@
+.flashcard {
+    width: 90%; /* Make the flashcard width responsive */
+    max-width: 300px; /* Max width to maintain readability */
+    height: auto; /* Allow the height to adjust to the content */
+    border: 1px solid #000;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-sizing: border-box; /* Ensure padding and border are included in the element's total width and height */
+    word-wrap: break-word; /* Allow long words to be able to break and wrap onto the next line */
+}
+
+.flashcard h3 {
+    margin: 0;
+}

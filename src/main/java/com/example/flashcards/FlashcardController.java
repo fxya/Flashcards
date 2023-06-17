@@ -18,7 +18,7 @@ class FlashcardController {
     @GetMapping("/flashcards")
     public String getFlashcards(Model model) {
         List<Flashcard> flashcards = (List<Flashcard>) repository.findAll();
-        model.addAttribute("flashcards", flashcards);
+        model.addAttribute("flashcardList", flashcards);
         return "index";
     }
 
