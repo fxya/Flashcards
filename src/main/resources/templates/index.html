@@ -5,20 +5,25 @@
     <link rel="stylesheet" type="text/css" href="/styles.css">
 </head>
 <body>
-<div class="container">
-    <div class="flashcard">
-        <h3>Question:</h3>
-        <p id="question">Loading...</p>
-        <h3>Answer:</h3>
-        <p id="answer">Loading...</p>
+    <div class="container">
+        <div class="flashcard">
+            <h3>Question:</h3>
+            <p id="question">Loading...</p>
+            <h3>Answer:</h3>
+            <p id="answer">Loading...</p>
+        </div>
+        <div class="buttoncontainer">
+            <button onclick="prevFlashcard()">Previous</button>
+            <button onclick="revealAnswer()">Reveal Answer</button>
+            <button onclick="nextFlashcard()">Next</button>
+        </div>
+        <div class="buttoncontainer">
+            <button id="addFlashcard" onclick="enableAddFlashcard()">Add Flashcard</button>
+            <button id="add" onclick="addFlashcard()" style="display: none;">Add</button>
+        </div>
     </div>
-    <div class="buttoncontainer">
-        <button onclick="prevFlashcard()">Previous</button>
-        <button onclick="revealAnswer()">Reveal Answer</button>
-        <button onclick="nextFlashcard()">Next</button>
-    </div>
-</div>
-<script src="/flashcards.js"></script>
+    <script src="/flashcards.js"></script>
 </body>
+
 
 </html>
