@@ -1,6 +1,7 @@
 package com.example.flashcards;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -17,4 +18,10 @@ public class FlashcardAPIController {
     public List<Flashcard> getFlashcards() {
         return (List<Flashcard>) repository.findAll();
     }
+
+    @PostMapping("/api/flashcards")
+    public Flashcard createFlashcard(Flashcard flashcard) {
+        return repository.save(flashcard);
+    }
+
 }

@@ -22,14 +22,4 @@ class FlashcardController {
         return "index";
     }
 
-    // POST
-    @PostMapping("/flashcards")
-    public Flashcard createFlashcard(Flashcard flashcard) {
-        return repository.save(flashcard);
-    }
-
-    // PUT
-
-    // GET INDIVIDUAL
-    // DELETE INDIVIDUAL
 }
