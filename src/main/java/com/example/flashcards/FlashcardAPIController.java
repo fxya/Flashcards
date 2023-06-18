@@ -1,9 +1,6 @@
 package com.example.flashcards;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,6 +23,19 @@ public class FlashcardAPIController {
     @PostMapping("/api/flashcards")
     public Flashcard createFlashcard(@RequestBody Flashcard flashcard) {
         return repository.save(flashcard);
+    }
+
+    @PutMapping("/api/flashcards/{id}")
+    public Flashcard updateFlashcard(@PathVariable Long id, @RequestBody Flashcard flashcard) {
+        var flashcardToUpdate = repository.findById(id).orElseThrow();
+        flashcardToUpdate.setQuestion(flashcard.getQuestion());
+        flashcardToUpdate.setAnswer(flashcard.getAnswer());
+        return repository.save(flashcardToUpdate);
+    }
+
+    @DeleteMapping("/api/flashcards/{id}")
+    public void deleteFlashcard(@PathVariable Long id) {
+        repository.deleteById(id);
     }
 
 }
