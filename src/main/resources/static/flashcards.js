@@ -15,6 +15,7 @@ function enableAddFlashcard() {
     document.getElementById('add').style.display = 'inline'; // Show the 'Add' button
     document.getElementById('addFlashcard').style.display = 'none'; // Hide the 'Add Flashcard' button
     document.getElementById('editFlashcard').style.display = 'none'; // Hide the 'Edit Flashcard' button
+    document.getElementById('navbuttoncontainer').style.display = 'none'; // Hide the navigation buttons
 }
 
 function addFlashcard() {
@@ -38,6 +39,7 @@ function addFlashcard() {
     document.getElementById('add').style.display = 'none'; // Hide the 'Add' button
     document.getElementById('addFlashcard').style.display = 'inline'; // Show the 'Add Flashcard' button
     document.getElementById('editFlashcard').style.display = 'inline'; // Show the 'Edit Flashcard' button
+    document.getElementById('navbuttoncontainer').style.display = 'inline'; // Show the navigation buttons
     updateFlashcard();
 }
 
@@ -47,6 +49,7 @@ function enableEditFlashcard() {
     document.getElementById('edit').style.display = 'inline'; // Show the 'Edit' button
     document.getElementById('editFlashcard').style.display = 'none'; // Hide the 'Edit Flashcard' button
     document.getElementById('addFlashcard').style.display = 'none'; // Hide the 'Add Flashcard' button
+    document.getElementById('navbuttoncontainer').style.display = 'none'; // Hide the navigation buttons
 }
 
 function editFlashcard() {
@@ -69,6 +72,7 @@ function editFlashcard() {
     document.getElementById('edit').style.display = 'none'; // Hide the 'Edit' button
     document.getElementById('editFlashcard').style.display = 'inline'; // Show the 'Edit Flashcard' button
     document.getElementById('addFlashcard').style.display = 'inline'; // Show the 'Add Flashcard' button
+    document.getElementById('navbuttoncontainer').style.display = 'inline'; // Show the navigation buttons
     updateFlashcard();
 }
 

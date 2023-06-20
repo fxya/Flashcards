@@ -6,9 +6,17 @@
     min-height: 100vh; /* Full height of the viewport */
 }
 
-.buttoncontainer {
+.navbuttoncontainer {
     display: flex;
     justify-content: space-between; /* Space buttons evenly */
+    width: 90%; /* Make the button container width responsive */
+    max-width: 300px; /* Max width to maintain readability */
+    padding: 10px;
+}
+
+.buttoncontainer {
+    display: flex;
+    justify-content: center;
     width: 90%; /* Make the button container width responsive */
     max-width: 300px; /* Max width to maintain readability */
     padding: 10px;
