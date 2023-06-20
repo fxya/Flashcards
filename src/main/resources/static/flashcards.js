@@ -1,21 +1,37 @@
 let flashcardList = [];
 let currentIndex = 0;
 
+function convertToInputTag(id) {
+    let element = document.getElementById(id);
+    let value = element.textContent;
+    element.outerHTML = `<input type="text" id="${id}" value="${value}">`;
+}
+
+function convertToPTag(id) {
+    let element = document.getElementById(id);
+    let value = element.value;
+    element.outerHTML = `<p id="${id}">${value}</p>`;
+}
+
+function toggleDisplay(id, state) {
+    document.getElementById(id).style.display = state ? 'inline' : 'none';
+}
+
 function updateFlashcard() {
     if (flashcardList[currentIndex]) {
         document.getElementById('question').textContent = flashcardList[currentIndex].question;
         document.getElementById('answer').textContent = flashcardList[currentIndex].answer;
-        document.getElementById('answer').style.display = 'none'; // Hide the answer by default
+        toggleDisplay('answer', false);
     }
 }
 
 function enableAddFlashcard() {
-    document.getElementById('question').outerHTML = '<input type="text" id="question" placeholder="Enter question">';
-    document.getElementById('answer').outerHTML = '<input type="text" id="answer" placeholder="Enter answer">';
-    document.getElementById('add').style.display = 'inline'; // Show the 'Add' button
-    document.getElementById('addFlashcard').style.display = 'none'; // Hide the 'Add Flashcard' button
-    document.getElementById('editFlashcard').style.display = 'none'; // Hide the 'Edit Flashcard' button
-    document.getElementById('navbuttoncontainer').style.display = 'none'; // Hide the navigation buttons
+    convertToInputTag('question');
+    convertToInputTag('answer');
+    toggleDisplay('add', true);
+    toggleDisplay('addFlashcard', false);
+    toggleDisplay('editFlashcard', false);
+    toggleDisplay('navbuttoncontainer', false);
 }
 
 function addFlashcard() {
@@ -34,22 +50,22 @@ function addFlashcard() {
             updateFlashcard();
         })
         .catch(error => console.error('Error:', error));
-    document.getElementById('question').outerHTML = '<p id="question"></p>'; // Convert back to p tag after adding
-    document.getElementById('answer').outerHTML = '<p id="answer"></p>'; // Convert back to p tag after adding
-    document.getElementById('add').style.display = 'none'; // Hide the 'Add' button
-    document.getElementById('addFlashcard').style.display = 'inline'; // Show the 'Add Flashcard' button
-    document.getElementById('editFlashcard').style.display = 'inline'; // Show the 'Edit Flashcard' button
-    document.getElementById('navbuttoncontainer').style.display = 'inline'; // Show the navigation buttons
-    updateFlashcard();
+
+    convertToPTag('question');
+    convertToPTag('answer');
+    toggleDisplay('add', false);
+    toggleDisplay('addFlashcard', true);
+    toggleDisplay('editFlashcard', true);
+    toggleDisplay('navbuttoncontainer', true);
 }
 
 function enableEditFlashcard() {
-    document.getElementById('question').outerHTML = '<input type="text" id="question" placeholder="Enter question">';
-    document.getElementById('answer').outerHTML = '<input type="text" id="answer" placeholder="Enter answer">';
-    document.getElementById('edit').style.display = 'inline'; // Show the 'Edit' button
-    document.getElementById('editFlashcard').style.display = 'none'; // Hide the 'Edit Flashcard' button
-    document.getElementById('addFlashcard').style.display = 'none'; // Hide the 'Add Flashcard' button
-    document.getElementById('navbuttoncontainer').style.display = 'none'; // Hide the navigation buttons
+    convertToInputTag('question');
+    convertToInputTag('answer');
+    toggleDisplay('edit', true);
+    toggleDisplay('editFlashcard', false);
+    toggleDisplay('addFlashcard', false);
+    toggleDisplay('navbuttoncontainer', false);
 }
 
 function editFlashcard() {
@@ -67,13 +83,13 @@ function editFlashcard() {
             updateFlashcard();
         })
         .catch(error => console.error('Error:', error));
-    document.getElementById('question').outerHTML = '<p id="question"></p>'; // Convert back to p tag after editing
-    document.getElementById('answer').outerHTML = '<p id="answer"></p>'; // Convert back to p tag after editing
-    document.getElementById('edit').style.display = 'none'; // Hide the 'Edit' button
-    document.getElementById('editFlashcard').style.display = 'inline'; // Show the 'Edit Flashcard' button
-    document.getElementById('addFlashcard').style.display = 'inline'; // Show the 'Add Flashcard' button
-    document.getElementById('navbuttoncontainer').style.display = 'inline'; // Show the navigation buttons
-    updateFlashcard();
+
+    convertToPTag('question');
+    convertToPTag('answer');
+    toggleDisplay('edit', false);
+    toggleDisplay('editFlashcard', true);
+    toggleDisplay('addFlashcard', true);
+    toggleDisplay('navbuttoncontainer', true);
 }
 
 function nextFlashcard() {
@@ -91,7 +107,7 @@ function prevFlashcard() {
 }
 
 function revealAnswer() {
-    document.getElementById('answer').style.display = 'block';
+    toggleDisplay('answer', true);
 }
 
 window.onload = function() {
