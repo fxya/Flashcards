@@ -17,6 +17,18 @@ function toggleDisplay(id, state) {
     document.getElementById(id).style.display = state ? 'inline' : 'none';
 }
 
+function prepareForInput() {
+    convertToInputTag('question');
+    convertToInputTag('answer');
+    toggleDisplay('navbuttoncontainer', false);
+}
+
+function restoreAfterInput() {
+    convertToPTag('question');
+    convertToPTag('answer');
+    toggleDisplay('navbuttoncontainer', true);
+}
+
 function updateFlashcard() {
     if (flashcardList[currentIndex]) {
         document.getElementById('question').textContent = flashcardList[currentIndex].question;
@@ -26,12 +38,10 @@ function updateFlashcard() {
 }
 
 function enableAddFlashcard() {
-    convertToInputTag('question');
-    convertToInputTag('answer');
+    prepareForInput();
     toggleDisplay('add', true);
     toggleDisplay('addFlashcard', false);
     toggleDisplay('editFlashcard', false);
-    toggleDisplay('navbuttoncontainer', false);
 }
 
 function addFlashcard() {
@@ -51,21 +61,17 @@ function addFlashcard() {
         })
         .catch(error => console.error('Error:', error));
 
-    convertToPTag('question');
-    convertToPTag('answer');
+    restoreAfterInput();
     toggleDisplay('add', false);
     toggleDisplay('addFlashcard', true);
     toggleDisplay('editFlashcard', true);
-    toggleDisplay('navbuttoncontainer', true);
 }
 
 function enableEditFlashcard() {
-    convertToInputTag('question');
-    convertToInputTag('answer');
+    prepareForInput();
     toggleDisplay('edit', true);
     toggleDisplay('editFlashcard', false);
     toggleDisplay('addFlashcard', false);
-    toggleDisplay('navbuttoncontainer', false);
 }
 
 function editFlashcard() {
@@ -84,12 +90,10 @@ function editFlashcard() {
         })
         .catch(error => console.error('Error:', error));
 
-    convertToPTag('question');
-    convertToPTag('answer');
+    restoreAfterInput();
     toggleDisplay('edit', false);
     toggleDisplay('editFlashcard', true);
     toggleDisplay('addFlashcard', true);
-    toggleDisplay('navbuttoncontainer', true);
 }
 
 function nextFlashcard() {
