@@ -14,7 +14,7 @@ function convertToPTag(id) {
 }
 
 function toggleDisplay(id, state) {
-    document.getElementById(id).style.display = state ? 'inline' : 'none';
+    document.getElementById(id).style.display = state ? 'flex' : 'none';
 }
 
 function prepareForInput() {
