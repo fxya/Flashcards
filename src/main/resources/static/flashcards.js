@@ -20,13 +20,24 @@ function toggleDisplay(id, state) {
 function prepareForInput() {
     convertToInputTag('question');
     convertToInputTag('answer');
+    toggleDisplay('undo', true)
     toggleDisplay('navbuttoncontainer', false);
 }
 
 function restoreAfterInput() {
     convertToPTag('question');
     convertToPTag('answer');
+    toggleDisplay('undo', false)
     toggleDisplay('navbuttoncontainer', true);
+}
+
+function undo() {
+    updateFlashcard();
+    restoreAfterInput();
+    toggleDisplay('add', false);
+    toggleDisplay('edit', false);
+    toggleDisplay('addFlashcard', true);
+    toggleDisplay('editFlashcard', true);
 }
 
 function updateFlashcard() {
