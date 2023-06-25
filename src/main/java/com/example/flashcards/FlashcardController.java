@@ -19,7 +19,7 @@ class FlashcardController {
     }
 
     @GetMapping("/flashcards")
-    public String getFlashcards(Model model) {
+    public String getIndexPage(Model model) {
         var flashcards = (List<Flashcard>) repository.findAll();
         model.addAttribute("flashcardList", flashcards);
         return "index";

@@ -25,7 +25,7 @@ class FlashcardControllerTest {
     @MockBean
     private FlashcardRepository repository;
     @Test
-    void getFlashcards() throws Exception {
+    void getIndexPage() throws Exception {
         when(repository.findAll()).thenReturn(Arrays.asList(new Flashcard("question1", "answer1"),
                 new Flashcard("question2", "answer2")));
 

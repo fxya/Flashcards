@@ -38,7 +38,7 @@ class FlashcardAPIControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.size()").value(2));
 
-        verify(repository, times(1)).findAll();
+        verify(repository, times(2)).findAll();
     }
 
     @Test
