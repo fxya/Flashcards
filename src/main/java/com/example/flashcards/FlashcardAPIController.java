@@ -18,7 +18,7 @@ public class FlashcardAPIController {
     @GetMapping("/api/flashcards")
     public List<Flashcard> getFlashcards() {
         var flashcards = (List<Flashcard>) repository.findAll();
-        Collections.shuffle((List<Flashcard>) repository.findAll());
+        Collections.shuffle(flashcards);
         return flashcards;
     }
 
