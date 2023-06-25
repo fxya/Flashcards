@@ -11,7 +11,7 @@
     justify-content: space-between; /* Space buttons evenly */
     width: 90%; /* Make the button container width responsive */
     max-width: 300px; /* Max width to maintain readability */
-    padding: 10px;
+    padding: 16px;
 }
 
 .buttoncontainer {
@@ -26,6 +26,12 @@
     width: 90%; /* Make the flashcard width responsive */
     max-width: 500px; /* Max width to maintain readability */
     border: 1px solid #000;
+    border-radius: 10px; /* Rounded corners */
+        -webkit-border-radius: 10px; /* Rounded corners for Safari */
+    drop-shadow(8px 8px 6px black)
+        -webkit-box-shadow: 8px 8px 6px black; /* Drop shadow for Safari */
+        -moz-box-shadow: 8px 8px 6px black; /* Drop shadow for Firefox */
+    box-shadow: 8px 8px 6px black; /* Drop shadow for standard browsers */
     padding: 10px;
     box-sizing: border-box; /* Ensure padding and border are included in the element's total width and height */
     word-wrap: break-word; /* Allow long words to be able to break and wrap onto the next line */
