@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collections;
 import java.util.List;
 
+/* This controller serves the API that the front-end uses to create, read, update,
+   and delete flashcards. */
 @RestController
 public class FlashcardAPIController {
     private final FlashcardRepository repository;
@@ -16,7 +18,7 @@ public class FlashcardAPIController {
     @GetMapping("/api/flashcards")
     public List<Flashcard> getFlashcards() {
         var flashcards = (List<Flashcard>) repository.findAll();
-        Collections.shuffle(flashcards);
+        Collections.shuffle((List<Flashcard>) repository.findAll());
         return flashcards;
     }
 
