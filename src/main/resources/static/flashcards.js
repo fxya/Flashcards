@@ -50,6 +50,10 @@ function updateFlashcard() {
         document.getElementById('question').textContent = flashcardList[currentIndex].question;
         document.getElementById('answer').textContent = flashcardList[currentIndex].answer;
         toggleDisplay('answer', false);
+    } else {
+        document.getElementById('question').textContent = 'No flashcards. Add one below.';
+        document.getElementById('answer').textContent = '';
+        toggleDisplay('answer', false);
     }
 }
 
