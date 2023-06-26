@@ -22,6 +22,9 @@ function prepareForInput() {
     convertToInputTag('answer');
     toggleDisplay('undo', true)
     toggleDisplay('navbuttoncontainer', false);
+    toggleDisplay('addFlashcard', false);
+    toggleDisplay('editFlashcard', false);
+    toggleDisplay('deleteFlashcard', false);
 }
 
 function restoreAfterInput() {
@@ -29,6 +32,9 @@ function restoreAfterInput() {
     convertToPTag('answer');
     toggleDisplay('undo', false)
     toggleDisplay('navbuttoncontainer', true);
+    toggleDisplay('addFlashcard', true);
+    toggleDisplay('editFlashcard', true);
+    toggleDisplay('deleteFlashcard', true);
 }
 
 function undo() {
@@ -36,8 +42,7 @@ function undo() {
     restoreAfterInput();
     toggleDisplay('add', false);
     toggleDisplay('edit', false);
-    toggleDisplay('addFlashcard', true);
-    toggleDisplay('editFlashcard', true);
+    toggleDisplay('delete', false);
 }
 
 function updateFlashcard() {
@@ -51,8 +56,6 @@ function updateFlashcard() {
 function enableAddFlashcard() {
     prepareForInput();
     toggleDisplay('add', true);
-    toggleDisplay('addFlashcard', false);
-    toggleDisplay('editFlashcard', false);
 }
 
 function addFlashcard() {
@@ -71,18 +74,13 @@ function addFlashcard() {
             updateFlashcard();
         })
         .catch(error => console.error('Error:', error));
-
     restoreAfterInput();
     toggleDisplay('add', false);
-    toggleDisplay('addFlashcard', true);
-    toggleDisplay('editFlashcard', true);
 }
 
 function enableEditFlashcard() {
     prepareForInput();
     toggleDisplay('edit', true);
-    toggleDisplay('editFlashcard', false);
-    toggleDisplay('addFlashcard', false);
 }
 
 function editFlashcard() {
@@ -103,8 +101,25 @@ function editFlashcard() {
 
     restoreAfterInput();
     toggleDisplay('edit', false);
-    toggleDisplay('editFlashcard', true);
-    toggleDisplay('addFlashcard', true);
+}
+
+function enableDeleteFlashcard() {
+    prepareForInput();
+    toggleDisplay('delete', true);
+}
+function deleteFlashcard() {
+    fetch('api/flashcards/' + flashcardList[currentIndex].id, {
+        method: 'DELETE'
+    })
+        .then(response => response.json())
+        .then(data => {
+            flashcardList.splice(currentIndex, 1);
+            currentIndex = 0;
+            updateFlashcard();
+        })
+        .catch(error => console.error('Error:', error));
+    restoreAfterInput();
+    toggleDisplay('delete', false);
 }
 
 function nextFlashcard() {
