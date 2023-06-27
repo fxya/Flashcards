@@ -32,8 +32,7 @@ class FlashcardControllerTest {
         mockMvc.perform(get("/flashcards"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.valueOf("text/html;charset=UTF-8")))
-                .andExpect(model().attributeExists("flashcardList"));
+                .andExpect(view().name("index"));
 
-        verify(repository, times(1)).findAll();
     }
 }
