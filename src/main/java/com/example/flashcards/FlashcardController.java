@@ -12,11 +12,6 @@ a single endpoint, /flashcards, that returns the index.html template. */
 
 @Controller
 class FlashcardController {
-    private final FlashcardRepository repository;
-
-    FlashcardController(FlashcardRepository repository) {
-        this.repository = repository;
-    }
 
     @GetMapping("/flashcards")
     public String getIndexPage() {
