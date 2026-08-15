@@ -7,5 +7,7 @@ import java.util.List;
 public interface FlashcardRepository extends CrudRepository<Flashcard, Long> {
     List<Flashcard> findByDeckId(Long deckId);
 
+    List<Flashcard> findByDeckIdOrderById(Long deckId);
+
     long countByDeckId(Long deckId);
 }

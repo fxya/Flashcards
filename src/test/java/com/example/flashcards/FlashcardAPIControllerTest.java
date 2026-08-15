@@ -35,7 +35,7 @@ class FlashcardAPIControllerTest {
 
     @Test
     void getFlashcards() throws Exception {
-        when(repository.findByDeckId(1L)).thenReturn(new ArrayList<>(List.of(
+        when(repository.findByDeckIdOrderById(1L)).thenReturn(new ArrayList<>(List.of(
                 new Flashcard("question1", "answer1"), new Flashcard("question2", "answer2"))));
 
         mockMvc.perform(get("/api/decks/1/flashcards"))
@@ -43,7 +43,7 @@ class FlashcardAPIControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.size()").value(2));
 
-        verify(repository, times(1)).findByDeckId(1L);
+        verify(repository, times(1)).findByDeckIdOrderById(1L);
     }
 
     @Test
@@ -131,5 +131,32 @@ class FlashcardAPIControllerTest {
                 .andExpect(status().isNotFound());
 
         verify(repository, never()).deleteById(anyLong());
+    }
+
+    @Test
+    void reviewFlashcard_marksStatusAndReturnsUpdatedCard() throws Exception {
+        Flashcard flashcard = new Flashcard("question", "answer");
+        when(repository.findById(1L)).thenReturn(Optional.of(flashcard));
+        when(repository.save(any(Flashcard.class))).thenReturn(flashcard);
+
+        mockMvc.perform(post("/api/flashcards/1/review")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"status\":\"KNOWN\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("KNOWN"));
+
+        verify(repository, times(1)).save(any(Flashcard.class));
+    }
+
+    @Test
+    void reviewFlashcard_returnsNotFoundForUnknownId() throws Exception {
+        when(repository.findById(1L)).thenReturn(Optional.empty());
+
+        mockMvc.perform(post("/api/flashcards/1/review")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"status\":\"UNKNOWN\"}"))
+                .andExpect(status().isNotFound());
+
+        verify(repository, never()).save(any(Flashcard.class));
     }
 }

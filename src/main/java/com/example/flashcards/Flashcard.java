@@ -1,6 +1,8 @@
 package com.example.flashcards;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -8,6 +10,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+
+import java.time.Instant;
 
 @Entity
 public class Flashcard {
@@ -26,6 +30,11 @@ public class Flashcard {
     @ManyToOne(optional = false)
     @JoinColumn(name = "deck_id", nullable = false)
     private Deck deck;
+
+    @Enumerated(EnumType.STRING)
+    private ReviewStatus status = ReviewStatus.UNSEEN;
+
+    private Instant lastReviewedAt;
 
     public Flashcard() {}
 
@@ -66,6 +75,22 @@ public class Flashcard {
 
     public void setDeck(Deck deck) {
         this.deck = deck;
+    }
+
+    public ReviewStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ReviewStatus status) {
+        this.status = status;
+    }
+
+    public Instant getLastReviewedAt() {
+        return lastReviewedAt;
+    }
+
+    public void setLastReviewedAt(Instant lastReviewedAt) {
+        this.lastReviewedAt = lastReviewedAt;
     }
 
 }

@@ -7,7 +7,9 @@ CREATE TABLE flashcard (
     id SERIAL PRIMARY KEY,
     question TEXT NOT NULL,
     answer TEXT NOT NULL,
-    deck_id BIGINT NOT NULL REFERENCES deck(id) ON DELETE CASCADE
+    deck_id BIGINT NOT NULL REFERENCES deck(id) ON DELETE CASCADE,
+    status TEXT NOT NULL DEFAULT 'UNSEEN',
+    last_reviewed_at TIMESTAMPTZ
 );
 
 INSERT INTO deck (name) VALUES ('General');

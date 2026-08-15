@@ -18,8 +18,8 @@ public class FlashcardAPIController {
 
     @GetMapping("/api/decks/{deckId}/flashcards")
     public List<Flashcard> getFlashcards(@PathVariable Long deckId,
-                                          @RequestParam(defaultValue = "false") boolean shuffle) {
-        return service.getFlashcards(deckId, shuffle);
+                                          @RequestParam(defaultValue = "natural") String order) {
+        return service.getFlashcards(deckId, order);
     }
 
     @PostMapping("/api/decks/{deckId}/flashcards")
@@ -35,6 +35,11 @@ public class FlashcardAPIController {
     @DeleteMapping("/api/flashcards/{id}")
     public void deleteFlashcard(@PathVariable Long id) {
         service.deleteFlashcard(id);
+    }
+
+    @PostMapping("/api/flashcards/{id}/review")
+    public Flashcard reviewFlashcard(@PathVariable Long id, @RequestBody ReviewRequest request) {
+        return service.reviewFlashcard(id, request.status());
     }
 
 }
