@@ -1,34 +1,34 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flashcards</title>
     <link rel="stylesheet" type="text/css" href="/styles.css">
 </head>
 <body>
-    <div class="container">
-        <div class="flashcard">
-            <h3>Question:</h3>
+    <main class="container">
+        <section class="flashcard">
+            <h3>Question</h3>
             <p id="question">Loading...</p>
-            <h3>Answer:</h3>
-            <p id="answer">Loading...</p>
-        </div>
+            <h3>Answer</h3>
+            <p id="answer" class="hidden">Loading...</p>
+        </section>
         <div id="navbuttoncontainer" class="navbuttoncontainer">
-            <button onclick="prevFlashcard()">Previous</button>
-            <button onclick="revealAnswer()">Reveal Answer</button>
-            <button onclick="nextFlashcard()">Next</button>
+            <button id="prevButton" type="button">Previous</button>
+            <button id="revealButton" type="button">Reveal Answer</button>
+            <button id="nextButton" type="button">Next</button>
         </div>
         <div class="buttoncontainer">
-            <button id="addFlashcard" onclick="enableAddFlashcard()">Add Flashcard</button>
-            <button id="editFlashcard" onclick="enableEditFlashcard()">Edit Flashcard</button>
-            <button id="deleteFlashcard" onclick="enableDeleteFlashcard()">Delete Flashcard</button>
-            <button id="add" onclick="addFlashcard()" style="display: none;">Add</button>
-            <button id="edit" onclick="editFlashcard()" style="display: none;">Edit</button>
-            <button id="delete" onclick="deleteFlashcard()" style="display: none;">Delete</button>
-            <button id="undo" onclick="undo()" style="display: none;">Undo</button>
+            <button id="addFlashcard" type="button">Add Flashcard</button>
+            <button id="editFlashcard" type="button">Edit Flashcard</button>
+            <button id="deleteFlashcard" type="button">Delete Flashcard</button>
+            <button id="add" type="button" class="hidden">Add</button>
+            <button id="edit" type="button" class="hidden">Edit</button>
+            <button id="delete" type="button" class="hidden">Delete</button>
+            <button id="undo" type="button" class="hidden">Undo</button>
         </div>
-    </div>
-    <script src="/flashcards.js"></script>
+    </main>
+    <script type="module" src="/flashcards.js"></script>
 </body>
-
-
 </html>
