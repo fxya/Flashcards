@@ -29,7 +29,7 @@ export function deleteDeck(id) {
     return request(`${DECKS_URL}/${id}`, {method: 'DELETE'});
 }
 
-export function fetchFlashcards(deckId, order = 'shuffle') {
+export function fetchFlashcards(deckId, order = 'study') {
     return request(`${DECKS_URL}/${deckId}/flashcards?order=${order}`);
 }
 
@@ -51,4 +51,12 @@ export function updateFlashcard(id, flashcard) {
 
 export function deleteFlashcard(id) {
     return request(`${FLASHCARDS_URL}/${id}`, {method: 'DELETE'});
+}
+
+export function reviewFlashcard(id, status) {
+    return request(`${FLASHCARDS_URL}/${id}/review`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({status})
+    });
 }

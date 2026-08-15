@@ -9,6 +9,8 @@
     --color-primary-hover: #2563eb;
     --color-danger: #dc2626;
     --color-danger-hover: #b91c1c;
+    --color-success: #16a34a;
+    --color-success-hover: #15803d;
     --shadow-card: 0 10px 30px rgba(15, 23, 42, 0.12);
     --shadow-card-hover: 0 14px 34px rgba(15, 23, 42, 0.16);
     --radius: 14px;
@@ -59,6 +61,7 @@ body {
 }
 
 #deckSelect,
+#orderSelect,
 .deckform input[type="text"] {
     font: inherit;
     padding: 8px 14px;
@@ -104,6 +107,12 @@ body {
     margin-bottom: 0;
 }
 
+.progress {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+}
+
 #answer {
     max-height: 300px;
     opacity: 1;
@@ -135,6 +144,16 @@ body {
     flex-wrap: nowrap; /* Keep Previous/Reveal Answer/Next on one row */
     max-width: 420px; /* Wide enough to fit all three buttons without wrapping */
     gap: 8px;
+}
+
+.reviewbuttoncontainer {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: 10px;
+    width: 90%; /* Make the button container width responsive */
+    max-width: 320px; /* Max width to maintain readability */
+    padding: 4px 0 0;
 }
 
 button {
@@ -185,15 +204,29 @@ button:disabled {
 }
 
 #delete,
-#deleteFlashcard {
+#deleteFlashcard,
+#unknownButton {
     color: var(--color-danger);
     border-color: var(--color-danger);
 }
 
 #delete:hover,
-#deleteFlashcard:hover {
+#deleteFlashcard:hover,
+#unknownButton:hover {
     background-color: var(--color-danger);
     border-color: var(--color-danger-hover);
+    color: #fff;
+}
+
+#knownButton {
+    background-color: var(--color-success);
+    border-color: var(--color-success);
+    color: #fff;
+}
+
+#knownButton:hover {
+    background-color: var(--color-success-hover);
+    border-color: var(--color-success-hover);
     color: #fff;
 }
 

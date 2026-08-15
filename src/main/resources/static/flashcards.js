@@ -2,6 +2,7 @@ import * as api from './api.js';
 
 let decks = [];
 let currentDeckId = null;
+let orderMode = 'study';
 let flashcardList = [];
 let currentIndex = 0;
 
@@ -30,6 +31,7 @@ function setDeckSwitchingEnabled(enabled) {
     document.getElementById('deckSelect').disabled = !enabled;
     document.getElementById('newDeckButton').disabled = !enabled;
     document.getElementById('deleteDeckButton').disabled = !enabled;
+    document.getElementById('orderSelect').disabled = !enabled;
 }
 
 function prepareForInput() {
@@ -64,6 +66,18 @@ function renderCurrentFlashcard() {
         flashcard ? flashcard.question : 'No flashcards. Add one below.';
     document.getElementById('answer').textContent = flashcard ? flashcard.answer : '';
     toggleVisible('answer', false);
+    toggleVisible('reviewButtons', false);
+    updateProgress();
+}
+
+function updateProgress() {
+    const progress = document.getElementById('progress');
+    if (flashcardList.length === 0) {
+        progress.textContent = '';
+        return;
+    }
+    const knownCount = flashcardList.filter(f => f.status === 'KNOWN').length;
+    progress.textContent = `Card ${currentIndex + 1} of ${flashcardList.length} · ${knownCount} known`;
 }
 
 function setNoDecksState() {
@@ -75,10 +89,13 @@ function setNoDecksState() {
     document.getElementById('answer').textContent = '';
     toggleVisible('answer', false);
     toggleVisible('navbuttoncontainer', false);
+    toggleVisible('reviewButtons', false);
+    document.getElementById('progress').textContent = '';
     document.getElementById('addFlashcard').disabled = true;
     document.getElementById('editFlashcard').disabled = true;
     document.getElementById('deleteFlashcard').disabled = true;
     document.getElementById('deleteDeckButton').disabled = true;
+    document.getElementById('orderSelect').disabled = true;
 }
 
 function populateDeckSelect() {
@@ -114,12 +131,13 @@ async function loadDecks(selectDeckId) {
     document.getElementById('editFlashcard').disabled = false;
     document.getElementById('deleteFlashcard').disabled = false;
     document.getElementById('deleteDeckButton').disabled = false;
+    document.getElementById('orderSelect').disabled = false;
 
     await loadFlashcards();
 }
 
 async function loadFlashcards() {
-    flashcardList = await api.fetchFlashcards(currentDeckId);
+    flashcardList = await api.fetchFlashcards(currentDeckId, orderMode);
     currentIndex = 0;
     renderCurrentFlashcard();
 }
@@ -204,10 +222,32 @@ function showPrevious() {
 
 function revealAnswer() {
     toggleVisible('answer', true);
+    toggleVisible('reviewButtons', true);
+}
+
+function submitReview(status) {
+    const flashcard = currentFlashcard();
+    if (!flashcard) {
+        return;
+    }
+    api.reviewFlashcard(flashcard.id, status)
+        .then(updated => {
+            flashcardList[currentIndex] = updated;
+            if (currentIndex < flashcardList.length - 1) {
+                currentIndex++;
+            }
+            renderCurrentFlashcard();
+        })
+        .catch(error => console.error('Error reviewing flashcard:', error));
 }
 
 function handleDeckChange(event) {
     currentDeckId = Number(event.target.value);
+    loadFlashcards().catch(error => console.error('Error loading flashcards:', error));
+}
+
+function handleOrderChange(event) {
+    orderMode = event.target.value;
     loadFlashcards().catch(error => console.error('Error loading flashcards:', error));
 }
 
@@ -261,7 +301,10 @@ function bindEventListeners() {
     document.getElementById('edit').addEventListener('click', submitEdit);
     document.getElementById('delete').addEventListener('click', submitDelete);
     document.getElementById('undo').addEventListener('click', handleUndo);
+    document.getElementById('knownButton').addEventListener('click', () => submitReview('KNOWN'));
+    document.getElementById('unknownButton').addEventListener('click', () => submitReview('UNKNOWN'));
     document.getElementById('deckSelect').addEventListener('change', handleDeckChange);
+    document.getElementById('orderSelect').addEventListener('change', handleOrderChange);
     document.getElementById('newDeckButton').addEventListener('click', showNewDeckForm);
     document.getElementById('cancelDeckButton').addEventListener('click', hideNewDeckForm);
     document.getElementById('createDeckButton').addEventListener('click', submitNewDeck);

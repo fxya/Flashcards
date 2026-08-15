@@ -25,12 +25,22 @@
             <h3>Answer</h3>
             <p id="answer" class="hidden">Loading...</p>
         </section>
+        <p id="progress" class="progress"></p>
         <div id="navbuttoncontainer" class="navbuttoncontainer">
             <button id="prevButton" type="button">Previous</button>
             <button id="revealButton" type="button">Reveal Answer</button>
             <button id="nextButton" type="button">Next</button>
         </div>
+        <div id="reviewButtons" class="reviewbuttoncontainer hidden">
+            <button id="unknownButton" type="button">Still Learning</button>
+            <button id="knownButton" type="button">I Knew It</button>
+        </div>
         <div class="buttoncontainer">
+            <select id="orderSelect">
+                <option value="study">Study order</option>
+                <option value="shuffle">Shuffle</option>
+                <option value="natural">In order</option>
+            </select>
             <button id="addFlashcard" type="button">Add Flashcard</button>
             <button id="editFlashcard" type="button">Edit Flashcard</button>
             <button id="deleteFlashcard" type="button">Delete Flashcard</button>
