@@ -33,13 +33,20 @@ By default the app connects to `jdbc:postgresql://localhost:5432/postgres` with 
 and `SPRING_DATASOURCE_PASSWORD` environment variables.
 
 ## Features
-- **Decks**: group flashcards into named decks; create, switch between, and delete them from the deck bar
-  above the card (deleting a deck deletes its flashcards too, after a confirmation prompt).
+- **Decks**: group flashcards into named decks; create, switch between, and delete them from the deck
+  picker (deleting a deck deletes its flashcards too, after a confirmation prompt).
 - **Study order**: pick how cards are served - *Study order* prioritizes cards marked "Still Learning",
   then ones you haven't reviewed yet, then ones you've marked "I Knew It"; *Shuffle* is a plain random
   order; *In order* is deterministic by creation order.
 - **Progress tracking**: reveal a card's answer to mark it "I Knew It" or "Still Learning" - the app
   timestamps the review and moves you on to the next card, with a running "Card X of N · Y known" line.
+- **Search**: filter the current deck's cards by question/answer text as you type.
+- **Import/export**: export a deck as a tab-separated `.txt` file compatible with Anki's plain-text
+  import/export format, or import one into the current deck.
+
+The study card is the only thing on the page meant to grab your attention - deck switching, search,
+ordering, and deck/import/export management live in a quiet top bar (the "≡" menu) so they don't
+compete with the card itself.
 
 ## Editing styles
 Tailwind's output (`src/main/resources/static/styles.css`) is compiled from `src/main/tailwind/input.css`

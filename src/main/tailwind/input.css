@@ -14,8 +14,9 @@
     --color-danger-hover: #b91c1c;
     --color-success: #16a34a;
     --color-success-hover: #15803d;
-    --shadow-card: 0 10px 30px rgba(15, 23, 42, 0.12);
-    --shadow-card-hover: 0 14px 34px rgba(15, 23, 42, 0.16);
+    --shadow-card: 0 10px 30px rgba(15, 23, 42, 0.1);
+    --shadow-card-hover: 0 14px 34px rgba(15, 23, 42, 0.14);
+    --shadow-panel: 0 10px 30px rgba(15, 23, 42, 0.14);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -25,8 +26,9 @@
         --color-ink: #f2f3f5;
         --color-muted: #a1a8b3;
         --color-border: #33373e;
-        --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.5);
-        --shadow-card-hover: 0 14px 34px rgba(0, 0, 0, 0.6);
+        --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.45);
+        --shadow-card-hover: 0 14px 34px rgba(0, 0, 0, 0.55);
+        --shadow-panel: 0 10px 30px rgba(0, 0, 0, 0.55);
     }
 }
 
@@ -34,19 +36,24 @@
     body {
         @apply m-0 bg-bg text-ink antialiased;
     }
+    ::backdrop, summary {
+        list-style: none;
+    }
+    summary::-webkit-details-marker {
+        display: none;
+    }
 }
 
 @layer components {
+    /* Primary, high-emphasis actions: Reveal answer, I knew it / Still learning,
+       Add/Save/Confirm. Loud on purpose - these are the actions the whole page
+       exists to support. */
     .btn {
-        @apply inline-flex cursor-pointer items-center justify-center gap-1 rounded-full border border-border
-               bg-surface px-[18px] py-2.5 text-ink transition-colors duration-150
+        @apply inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-full border border-border
+               bg-surface px-[18px] py-2.5 text-sm font-medium text-ink transition-colors duration-150
                hover:border-primary hover:text-primary active:scale-[0.97]
                focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary
                disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100;
-        list-style: none;
-    }
-    .btn::-webkit-details-marker {
-        display: none;
     }
     .btn-primary {
         @apply border-primary bg-primary text-white hover:border-primary-hover hover:bg-primary-hover hover:text-white;
@@ -57,15 +64,86 @@
     .btn-success {
         @apply border-success bg-success text-white hover:border-success-hover hover:bg-success-hover hover:text-white;
     }
+    .btn-sm {
+        @apply px-3 py-1.5 text-xs;
+    }
+    .btn-lg {
+        @apply px-7 py-3 text-base;
+    }
+
+    /* Quiet controls: deck/order pickers, search, deck management. Understated on
+       purpose so they recede behind the study card instead of competing with it. */
+    .quiet-select,
+    .quiet-input {
+        @apply rounded-lg border border-transparent bg-transparent px-2 py-1.5 text-sm text-ink
+               transition-colors duration-150 placeholder:text-muted
+               hover:border-border focus:border-border focus:outline-none
+               disabled:cursor-not-allowed disabled:opacity-50;
+    }
+    .quiet-link {
+        @apply block w-full cursor-pointer rounded-lg px-2 py-1.5 text-left text-sm text-ink
+               transition-colors duration-150 hover:bg-bg;
+        list-style: none;
+    }
+    .quiet-divider {
+        @apply my-1.5 border-t border-border;
+    }
+    .icon-btn {
+        @apply inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-transparent
+               text-muted transition-colors duration-150 hover:border-border hover:text-ink
+               focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary
+               disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-transparent;
+    }
+    .icon-text-btn {
+        @apply inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm text-muted
+               transition-colors duration-150 hover:bg-bg hover:text-ink
+               focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary;
+    }
+    .icon {
+        @apply shrink-0 fill-none stroke-current;
+        stroke-width: 1.75;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    /* The manage menu: everything deck-level (order, new/delete deck, import/export)
+       tucked behind one icon button instead of a permanent row of controls. */
+    .manage-panel {
+        @apply absolute inset-x-0 top-[calc(100%+8px)] z-10 flex flex-col gap-1 rounded-2xl
+               border border-border bg-surface p-3;
+        box-shadow: var(--shadow-panel);
+    }
+
+    /* The study card itself: the one element on the page allowed to be loud. */
     .card {
-        @apply w-[90%] max-w-[500px] rounded-2xl border border-border bg-surface p-6 transition-all duration-200
-               hover:-translate-y-0.5;
+        @apply rounded-3xl border border-border bg-surface p-8 text-center transition-shadow duration-200;
         box-shadow: var(--shadow-card);
     }
-    .card:hover {
-        box-shadow: var(--shadow-card-hover);
+    .eyebrow {
+        @apply text-xs font-semibold uppercase tracking-wider text-muted;
+    }
+    .question-text {
+        @apply mt-2 text-2xl leading-snug text-balance;
+    }
+    .answer-text {
+        @apply mt-2 text-xl leading-snug text-balance text-muted;
+    }
+    .reveal summary {
+        @apply mx-auto;
+    }
+    .review-actions {
+        @apply mt-5 flex flex-wrap justify-center gap-3;
+    }
+    .nav-row {
+        @apply flex w-full max-w-[280px] items-center justify-between gap-3;
+    }
+    .progress-text {
+        @apply text-sm text-muted;
+    }
+    .card-actions {
+        @apply flex flex-wrap justify-center gap-1;
     }
     .field-input {
-        @apply rounded-full border border-border bg-surface px-3.5 py-2 text-ink;
+        @apply rounded-2xl border border-border bg-surface px-4 py-2.5 text-ink;
     }
 }

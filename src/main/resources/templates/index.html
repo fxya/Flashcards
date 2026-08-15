@@ -8,43 +8,100 @@
     <script src="/vendor/htmx.min.js" defer></script>
 </head>
 <body>
-    <main class="flex min-h-screen flex-col items-center gap-2.5 px-4 py-6">
-        <div class="deckbar flex w-[90%] max-w-[500px] flex-wrap items-center justify-center gap-2">
-            <form method="get" action="/flashcards" id="deckSwitchForm" class="contents">
-                <select name="deckId" onchange="this.form.submit()" th:disabled="${#lists.isEmpty(decks)}" class="field-input">
+    <main class="mx-auto flex min-h-screen max-w-md flex-col items-center gap-8 px-4 py-10 sm:py-16">
+        <div class="relative flex w-full items-center gap-2">
+            <form method="get" action="/flashcards" id="deckSwitchForm" class="flex flex-1 items-center gap-2">
+                <select name="deckId" onchange="this.form.submit()" th:disabled="${#lists.isEmpty(decks)}"
+                        class="quiet-select shrink-0">
                     <option th:if="${#lists.isEmpty(decks)}" value="">No decks</option>
                     <option th:each="d : ${decks}"
                             th:value="${d.id}"
                             th:selected="${d.id == selectedDeckId}"
                             th:text="${d.name + ' (' + d.cardCount + ')'}"></option>
                 </select>
-                <select name="order" onchange="this.form.submit()" th:disabled="${#lists.isEmpty(decks)}" class="field-input">
-                    <option value="study" th:selected="${order == 'study'}">Study order</option>
-                    <option value="shuffle" th:selected="${order == 'shuffle'}">Shuffle</option>
-                    <option value="natural" th:selected="${order == 'natural'}">In order</option>
-                </select>
-            </form>
 
-            <details class="deck-details relative">
-                <summary class="btn">New Deck</summary>
-                <form method="post" action="/decks"
-                      class="absolute left-0 top-[calc(100%+8px)] z-10 flex w-max flex-nowrap items-center gap-2
-                             rounded-xl border border-border bg-surface p-2.5 shadow-[var(--shadow-card)]">
-                    <input type="hidden" name="deckId" th:value="${selectedDeckId}">
-                    <input type="hidden" name="order" th:value="${order}">
-                    <input type="text" name="name" placeholder="Deck name" autocomplete="off" required maxlength="200"
-                           class="field-input">
-                    <button type="submit" class="btn btn-primary">Create</button>
-                </form>
-                <p class="mt-1 text-sm text-danger" th:if="${deckError}" th:text="${deckError}"></p>
-            </details>
-
-            <form method="post" th:if="${!#lists.isEmpty(decks)}"
-                  th:attr="action=@{/decks/{id}/delete(id=${selectedDeckId})},
-                           onsubmit=|return confirm('Delete &quot;${selectedDeck.name}&quot; and all ${selectedDeck.cardCount} of its flashcards? This cannot be undone.')|">
+                <label class="relative flex-1">
+                    <span class="sr-only">Search cards</span>
+                    <svg class="icon pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" viewBox="0 0 24 24">
+                        <circle cx="11" cy="11" r="6"></circle>
+                        <path d="M20 20l-4.35-4.35"></path>
+                    </svg>
+                    <input type="search" name="search" placeholder="Search" autocomplete="off" th:value="${search}"
+                           th:disabled="${#lists.isEmpty(decks)}"
+                           class="quiet-input w-full pl-8"
+                           hx-get="/flashcards" hx-include="[name='deckId']"
+                           th:attr="hx-vals=|{&quot;order&quot;:&quot;${order}&quot;}|"
+                           hx-trigger="input changed delay:300ms, search" hx-target="#study" hx-swap="outerHTML">
+                </label>
                 <input type="hidden" name="order" th:value="${order}">
-                <button type="submit" class="btn">Delete Deck</button>
             </form>
+
+            <details class="manage-menu shrink-0">
+                <summary class="icon-btn" aria-label="Manage deck">
+                    <svg class="icon h-5 w-5" viewBox="0 0 24 24">
+                        <line x1="4" y1="7" x2="20" y2="7"></line>
+                        <circle cx="15" cy="7" r="1.6" fill="currentColor" stroke="none"></circle>
+                        <line x1="4" y1="12" x2="20" y2="12"></line>
+                        <circle cx="9" cy="12" r="1.6" fill="currentColor" stroke="none"></circle>
+                        <line x1="4" y1="17" x2="20" y2="17"></line>
+                        <circle cx="17" cy="17" r="1.6" fill="currentColor" stroke="none"></circle>
+                    </svg>
+                </summary>
+                <div class="manage-panel">
+                    <form method="get" action="/flashcards" class="flex items-center justify-between gap-2">
+                        <label class="text-sm text-muted">Order</label>
+                        <select name="order" onchange="this.form.submit()" class="quiet-select">
+                            <option value="study" th:selected="${order == 'study'}">Study order</option>
+                            <option value="shuffle" th:selected="${order == 'shuffle'}">Shuffle</option>
+                            <option value="natural" th:selected="${order == 'natural'}">In order</option>
+                        </select>
+                        <input type="hidden" name="deckId" th:value="${selectedDeckId}">
+                        <input type="hidden" name="search" th:value="${search}">
+                    </form>
+
+                    <hr class="quiet-divider">
+
+                    <details>
+                        <summary class="quiet-link">New deck</summary>
+                        <form method="post" action="/decks" class="mt-2 flex gap-2">
+                            <input type="hidden" name="deckId" th:value="${selectedDeckId}">
+                            <input type="hidden" name="order" th:value="${order}">
+                            <input type="text" name="name" placeholder="Deck name" autocomplete="off" required maxlength="200"
+                                   class="quiet-input min-w-0 flex-1">
+                            <button type="submit" class="btn btn-primary btn-sm">Create</button>
+                        </form>
+                        <p class="mt-1 text-sm text-danger" th:if="${deckError}" th:text="${deckError}"></p>
+                    </details>
+
+                    <div th:if="${!#lists.isEmpty(decks)}" class="contents">
+                        <hr class="quiet-divider">
+
+                        <a class="quiet-link" th:href="@{/decks/{id}/export(id=${selectedDeckId})}">Export deck</a>
+
+                        <details>
+                            <summary class="quiet-link">Import cards</summary>
+                            <form method="post" th:attr="action=@{/decks/{id}/import(id=${selectedDeckId})}"
+                                  enctype="multipart/form-data" class="mt-2 flex flex-wrap gap-2">
+                                <input type="hidden" name="order" th:value="${order}">
+                                <input type="file" name="file" accept=".txt,.tsv,.csv" required
+                                       class="quiet-input min-w-0 flex-1 text-xs">
+                                <button type="submit" class="btn btn-primary btn-sm">Import</button>
+                            </form>
+                            <p class="mt-1 text-xs text-muted">Tab-separated question/answer text, same as Anki's plain-text export.</p>
+                        </details>
+                        <p class="text-sm text-success" th:if="${importMessage}" th:text="${importMessage}"></p>
+
+                        <hr class="quiet-divider">
+
+                        <form method="post"
+                              th:attr="action=@{/decks/{id}/delete(id=${selectedDeckId})},
+                                       onsubmit=|return confirm('Delete &quot;${selectedDeck.name}&quot; and all ${selectedDeck.cardCount} of its flashcards? This cannot be undone.')|">
+                            <input type="hidden" name="order" th:value="${order}">
+                            <button type="submit" class="quiet-link text-danger">Delete deck</button>
+                        </form>
+                    </div>
+                </div>
+            </details>
         </div>
 
         <div th:replace="~{fragments/study :: study}"></div>
