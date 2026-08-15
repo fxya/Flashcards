@@ -6,6 +6,12 @@ Simple flashcard app in Spring Boot using Postgres for db and Thymeleaf for fron
 Flashcards are organized into decks, and each card tracks whether you know it, so study sessions
 resurface the cards you got wrong before the ones you've already got down.
 
+The frontend is server-rendered HTML: [htmx](https://htmx.org) swaps fragments in place for the
+study flow (next/previous, add/edit/delete, marking a card known), plain HTML forms handle deck
+management, and styling is [Tailwind CSS](https://tailwindcss.com). There's no separate JSON API and
+no JS build step at runtime - htmx is vendored as a static file, and Tailwind's compiled output is
+committed like any other asset.
+
 Requires Java 21+.
 
 | Question | Answer revealed |
@@ -14,8 +20,9 @@ Requires Java 21+.
 
 ## How to run
 1. Clone the repo
-2. Install Postgres and run `src/main/resources/CreateTable.sql`. This creates the `deck` and `flashcard`
-   tables and seeds a "General" deck with one example card.
+2. Start Postgres, schema included: `docker compose up -d`. This creates the `deck` and `flashcard`
+   tables and seeds a "General" deck with one example card. No Docker? Install Postgres yourself and run
+   `src/main/resources/CreateTable.sql` instead.
    - Upgrading an older installation instead? Run `Migration_AddDecks.sql` then
      `Migration_AddReviewTracking.sql` (both in `src/main/resources`) against your existing database.
 3. Run the app in your IDE or with `./gradlew build` to build with tests.
@@ -33,6 +40,19 @@ and `SPRING_DATASOURCE_PASSWORD` environment variables.
   order; *In order* is deterministic by creation order.
 - **Progress tracking**: reveal a card's answer to mark it "I Knew It" or "Still Learning" - the app
   timestamps the review and moves you on to the next card, with a running "Card X of N · Y known" line.
+
+## Editing styles
+Tailwind's output (`src/main/resources/static/styles.css`) is compiled from `src/main/tailwind/input.css`
+and committed, so `./gradlew build` doesn't need to fetch anything extra. After changing `input.css` or
+adding classes in the templates, regenerate it with:
+
+```
+./gradlew tailwindBuild
+```
+
+This downloads the [standalone Tailwind CLI](https://github.com/tailwindlabs/tailwindcss/releases) (no
+Node/npm required) into `build/tailwind-cli/` on first run. The task currently targets Linux x64; on
+another platform, grab the matching standalone binary and run it with the same `-i`/`-o` arguments.
 
 ## CI
 Every push to `main` and every pull request runs `./gradlew build` (compile + full test suite) against a
