@@ -14,8 +14,9 @@ Requires Java 21+.
 
 ## How to run
 1. Clone the repo
-2. Install Postgres and run `src/main/resources/CreateTable.sql`. This creates the `deck` and `flashcard`
-   tables and seeds a "General" deck with one example card.
+2. Start Postgres, schema included: `docker compose up -d`. This creates the `deck` and `flashcard`
+   tables and seeds a "General" deck with one example card. No Docker? Install Postgres yourself and run
+   `src/main/resources/CreateTable.sql` instead.
    - Upgrading an older installation instead? Run `Migration_AddDecks.sql` then
      `Migration_AddReviewTracking.sql` (both in `src/main/resources`) against your existing database.
 3. Run the app in your IDE or with `./gradlew build` to build with tests.
