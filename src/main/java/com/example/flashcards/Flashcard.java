@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 public class Flashcard {
@@ -11,7 +13,12 @@ public class Flashcard {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Question must not be blank")
+    @Size(max = 1000, message = "Question must be 1000 characters or fewer")
     private String question;
+
+    @NotBlank(message = "Answer must not be blank")
+    @Size(max = 1000, message = "Answer must be 1000 characters or fewer")
     private String answer;
 
     public Flashcard() {}

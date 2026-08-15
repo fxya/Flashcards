@@ -1,155 +1,158 @@
+import * as api from './api.js';
+
 let flashcardList = [];
 let currentIndex = 0;
 
+function toggleVisible(id, visible) {
+    document.getElementById(id).classList.toggle('hidden', !visible);
+}
+
 function convertToInputTag(id) {
-    let element = document.getElementById(id);
-    let value = element.textContent;
-    element.outerHTML = `<input type="text" id="${id}" value="${value}">`;
+    const element = document.getElementById(id);
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.id = id;
+    input.value = element.textContent;
+    element.replaceWith(input);
 }
 
 function convertToPTag(id) {
-    let element = document.getElementById(id);
-    let value = element.value;
-    element.outerHTML = `<p id="${id}">${value}</p>`;
-}
-
-function toggleDisplay(id, state) {
-    document.getElementById(id).style.display = state ? 'flex' : 'none';
+    const element = document.getElementById(id);
+    const p = document.createElement('p');
+    p.id = id;
+    p.textContent = element.value;
+    element.replaceWith(p);
 }
 
 function prepareForInput() {
     convertToInputTag('question');
     convertToInputTag('answer');
-    toggleDisplay('undo', true)
-    toggleDisplay('navbuttoncontainer', false);
-    toggleDisplay('addFlashcard', false);
-    toggleDisplay('editFlashcard', false);
-    toggleDisplay('deleteFlashcard', false);
+    toggleVisible('undo', true);
+    toggleVisible('navbuttoncontainer', false);
+    toggleVisible('addFlashcard', false);
+    toggleVisible('editFlashcard', false);
+    toggleVisible('deleteFlashcard', false);
 }
 
 function restoreAfterInput() {
     convertToPTag('question');
     convertToPTag('answer');
-    toggleDisplay('undo', false)
-    toggleDisplay('navbuttoncontainer', true);
-    toggleDisplay('addFlashcard', true);
-    toggleDisplay('editFlashcard', true);
-    toggleDisplay('deleteFlashcard', true);
+    toggleVisible('undo', false);
+    toggleVisible('navbuttoncontainer', true);
+    toggleVisible('addFlashcard', true);
+    toggleVisible('editFlashcard', true);
+    toggleVisible('deleteFlashcard', true);
 }
 
-function undo() {
-    updateFlashcard();
-    restoreAfterInput();
-    toggleDisplay('add', false);
-    toggleDisplay('edit', false);
-    toggleDisplay('delete', false);
+function renderCurrentFlashcard() {
+    const flashcard = flashcardList[currentIndex];
+    document.getElementById('question').textContent =
+        flashcard ? flashcard.question : 'No flashcards. Add one below.';
+    document.getElementById('answer').textContent = flashcard ? flashcard.answer : '';
+    toggleVisible('answer', false);
 }
 
-function updateFlashcard() {
-    if (flashcardList[currentIndex]) {
-        document.getElementById('question').textContent = flashcardList[currentIndex].question;
-        document.getElementById('answer').textContent = flashcardList[currentIndex].answer;
-        toggleDisplay('answer', false);
-    } else {
-        document.getElementById('question').textContent = 'No flashcards. Add one below.';
-        document.getElementById('answer').textContent = '';
-        toggleDisplay('answer', false);
-    }
-}
-
-function enableAddFlashcard() {
+function handleAdd() {
     prepareForInput();
-    toggleDisplay('add', true);
+    toggleVisible('add', true);
 }
 
-function addFlashcard() {
+function submitAdd() {
     const question = document.getElementById('question').value;
     const answer = document.getElementById('answer').value;
-    const flashcard = {question: question, answer: answer};
-    fetch('api/flashcards', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(flashcard)
-    })
-        .then(response => response.json())
+    api.createFlashcard({question, answer})
         .then(data => {
             flashcardList.push(data);
             currentIndex = flashcardList.length - 1;
-            updateFlashcard();
+            renderCurrentFlashcard();
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => console.error('Error adding flashcard:', error));
     restoreAfterInput();
-    toggleDisplay('add', false);
+    toggleVisible('add', false);
 }
 
-function enableEditFlashcard() {
+function handleEdit() {
     prepareForInput();
-    toggleDisplay('edit', true);
+    toggleVisible('edit', true);
 }
 
-function editFlashcard() {
+function submitEdit() {
     const question = document.getElementById('question').value;
     const answer = document.getElementById('answer').value;
-    const flashcard = {question: question, answer: answer};
-    fetch('api/flashcards/' + flashcardList[currentIndex].id, {
-        method: 'PUT',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(flashcard)
-    })
-        .then(response => response.json())
+    api.updateFlashcard(flashcardList[currentIndex].id, {question, answer})
         .then(data => {
             flashcardList[currentIndex] = data;
-            updateFlashcard();
+            renderCurrentFlashcard();
         })
-        .catch(error => console.error('Error:', error));
-
+        .catch(error => console.error('Error updating flashcard:', error));
     restoreAfterInput();
-    toggleDisplay('edit', false);
+    toggleVisible('edit', false);
 }
 
-function enableDeleteFlashcard() {
+function handleDelete() {
     prepareForInput();
-    toggleDisplay('delete', true);
+    toggleVisible('delete', true);
 }
-function deleteFlashcard() {
-    fetch('api/flashcards/' + flashcardList[currentIndex].id, {
-        method: 'DELETE'
-    })
-        .then(response => response.json())
-        .then(data => {
+
+function submitDelete() {
+    api.deleteFlashcard(flashcardList[currentIndex].id)
+        .then(() => {
             flashcardList.splice(currentIndex, 1);
             currentIndex = 0;
-            updateFlashcard();
+            renderCurrentFlashcard();
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => console.error('Error deleting flashcard:', error));
     restoreAfterInput();
-    toggleDisplay('delete', false);
+    toggleVisible('delete', false);
 }
 
-function nextFlashcard() {
+function handleUndo() {
+    renderCurrentFlashcard();
+    restoreAfterInput();
+    toggleVisible('add', false);
+    toggleVisible('edit', false);
+    toggleVisible('delete', false);
+}
+
+function showNext() {
     if (currentIndex < flashcardList.length - 1) {
         currentIndex++;
-        updateFlashcard();
+        renderCurrentFlashcard();
     }
 }
 
-function prevFlashcard() {
+function showPrevious() {
     if (currentIndex > 0) {
         currentIndex--;
-        updateFlashcard();
+        renderCurrentFlashcard();
     }
 }
 
 function revealAnswer() {
-    toggleDisplay('answer', true);
+    toggleVisible('answer', true);
 }
 
-window.onload = function() {
-    fetch('api/flashcards')
-        .then(response => response.json())
+function bindEventListeners() {
+    document.getElementById('prevButton').addEventListener('click', showPrevious);
+    document.getElementById('revealButton').addEventListener('click', revealAnswer);
+    document.getElementById('nextButton').addEventListener('click', showNext);
+    document.getElementById('addFlashcard').addEventListener('click', handleAdd);
+    document.getElementById('editFlashcard').addEventListener('click', handleEdit);
+    document.getElementById('deleteFlashcard').addEventListener('click', handleDelete);
+    document.getElementById('add').addEventListener('click', submitAdd);
+    document.getElementById('edit').addEventListener('click', submitEdit);
+    document.getElementById('delete').addEventListener('click', submitDelete);
+    document.getElementById('undo').addEventListener('click', handleUndo);
+}
+
+function init() {
+    bindEventListeners();
+    api.fetchFlashcards(true)
         .then(data => {
             flashcardList = data;
-            updateFlashcard();
+            renderCurrentFlashcard();
         })
-        .catch(error => console.error('Error:', error));
-};
+        .catch(error => console.error('Error loading flashcards:', error));
+}
+
+init();

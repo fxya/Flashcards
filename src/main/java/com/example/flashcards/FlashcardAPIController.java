@@ -1,8 +1,8 @@
 package com.example.flashcards;
 
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.List;
 
 /* This controller serves the API that the front-end uses to create, read, update,
@@ -10,35 +10,30 @@ import java.util.List;
 
 @RestController
 public class FlashcardAPIController {
-    private final FlashcardRepository repository;
+    private final FlashcardService service;
 
-    public FlashcardAPIController(FlashcardRepository repository) {
-        this.repository = repository;
+    public FlashcardAPIController(FlashcardService service) {
+        this.service = service;
     }
 
     @GetMapping("/api/flashcards")
-    public List<Flashcard> getFlashcards() {
-        var flashcards = (List<Flashcard>) repository.findAll();
-        Collections.shuffle(flashcards);
-        return flashcards;
+    public List<Flashcard> getFlashcards(@RequestParam(defaultValue = "false") boolean shuffle) {
+        return service.getFlashcards(shuffle);
     }
 
     @PostMapping("/api/flashcards")
-    public Flashcard createFlashcard(@RequestBody Flashcard flashcard) {
-        return repository.save(flashcard);
+    public Flashcard createFlashcard(@Valid @RequestBody Flashcard flashcard) {
+        return service.createFlashcard(flashcard);
     }
 
     @PutMapping("/api/flashcards/{id}")
-    public Flashcard updateFlashcard(@PathVariable Long id, @RequestBody Flashcard flashcard) {
-        var flashcardToUpdate = repository.findById(id).orElseThrow();
-        flashcardToUpdate.setQuestion(flashcard.getQuestion());
-        flashcardToUpdate.setAnswer(flashcard.getAnswer());
-        return repository.save(flashcardToUpdate);
+    public Flashcard updateFlashcard(@PathVariable Long id, @Valid @RequestBody Flashcard flashcard) {
+        return service.updateFlashcard(id, flashcard);
     }
 
     @DeleteMapping("/api/flashcards/{id}")
     public void deleteFlashcard(@PathVariable Long id) {
-        repository.deleteById(id);
+        service.deleteFlashcard(id);
     }
 
 }
