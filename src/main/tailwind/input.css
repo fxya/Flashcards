@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+@source "../resources/templates";
+
+@theme {
+    --color-bg: #f4f5f7;
+    --color-surface: #ffffff;
+    --color-ink: #1f2430;
+    --color-muted: #5b6472;
+    --color-border: #d8dbe0;
+    --color-primary: #3b82f6;
+    --color-primary-hover: #2563eb;
+    --color-danger: #dc2626;
+    --color-danger-hover: #b91c1c;
+    --color-success: #16a34a;
+    --color-success-hover: #15803d;
+    --shadow-card: 0 10px 30px rgba(15, 23, 42, 0.12);
+    --shadow-card-hover: 0 14px 34px rgba(15, 23, 42, 0.16);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-bg: #121417;
+        --color-surface: #1c1f24;
+        --color-ink: #f2f3f5;
+        --color-muted: #a1a8b3;
+        --color-border: #33373e;
+        --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.5);
+        --shadow-card-hover: 0 14px 34px rgba(0, 0, 0, 0.6);
+    }
+}
+
+@layer base {
+    body {
+        @apply m-0 bg-bg text-ink antialiased;
+    }
+}
+
+@layer components {
+    .btn {
+        @apply inline-flex cursor-pointer items-center justify-center gap-1 rounded-full border border-border
+               bg-surface px-[18px] py-2.5 text-ink transition-colors duration-150
+               hover:border-primary hover:text-primary active:scale-[0.97]
+               focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary
+               disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100;
+        list-style: none;
+    }
+    .btn::-webkit-details-marker {
+        display: none;
+    }
+    .btn-primary {
+        @apply border-primary bg-primary text-white hover:border-primary-hover hover:bg-primary-hover hover:text-white;
+    }
+    .btn-danger {
+        @apply border-danger text-danger hover:border-danger-hover hover:bg-danger hover:text-white;
+    }
+    .btn-success {
+        @apply border-success bg-success text-white hover:border-success-hover hover:bg-success-hover hover:text-white;
+    }
+    .card {
+        @apply w-[90%] max-w-[500px] rounded-2xl border border-border bg-surface p-6 transition-all duration-200
+               hover:-translate-y-0.5;
+        box-shadow: var(--shadow-card);
+    }
+    .card:hover {
+        box-shadow: var(--shadow-card-hover);
+    }
+    .field-input {
+        @apply rounded-full border border-border bg-surface px-3.5 py-2 text-ink;
+    }
+}

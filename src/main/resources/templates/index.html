@@ -8,39 +8,42 @@
     <script src="/vendor/htmx.min.js" defer></script>
 </head>
 <body>
-    <main class="container">
-        <div class="deckbar">
-            <form method="get" action="/flashcards" id="deckSwitchForm">
-                <select name="deckId" onchange="this.form.submit()" th:disabled="${#lists.isEmpty(decks)}">
+    <main class="flex min-h-screen flex-col items-center gap-2.5 px-4 py-6">
+        <div class="deckbar flex w-[90%] max-w-[500px] flex-wrap items-center justify-center gap-2">
+            <form method="get" action="/flashcards" id="deckSwitchForm" class="contents">
+                <select name="deckId" onchange="this.form.submit()" th:disabled="${#lists.isEmpty(decks)}" class="field-input">
                     <option th:if="${#lists.isEmpty(decks)}" value="">No decks</option>
                     <option th:each="d : ${decks}"
                             th:value="${d.id}"
                             th:selected="${d.id == selectedDeckId}"
                             th:text="${d.name + ' (' + d.cardCount + ')'}"></option>
                 </select>
-                <select name="order" onchange="this.form.submit()" th:disabled="${#lists.isEmpty(decks)}">
+                <select name="order" onchange="this.form.submit()" th:disabled="${#lists.isEmpty(decks)}" class="field-input">
                     <option value="study" th:selected="${order == 'study'}">Study order</option>
                     <option value="shuffle" th:selected="${order == 'shuffle'}">Shuffle</option>
                     <option value="natural" th:selected="${order == 'natural'}">In order</option>
                 </select>
             </form>
 
-            <details class="deck-details">
-                <summary>New Deck</summary>
-                <form method="post" action="/decks" class="deckform">
+            <details class="deck-details relative">
+                <summary class="btn">New Deck</summary>
+                <form method="post" action="/decks"
+                      class="absolute left-0 top-[calc(100%+8px)] z-10 flex w-max flex-nowrap items-center gap-2
+                             rounded-xl border border-border bg-surface p-2.5 shadow-[var(--shadow-card)]">
                     <input type="hidden" name="deckId" th:value="${selectedDeckId}">
                     <input type="hidden" name="order" th:value="${order}">
-                    <input type="text" name="name" placeholder="Deck name" autocomplete="off" required maxlength="200">
-                    <button type="submit">Create</button>
+                    <input type="text" name="name" placeholder="Deck name" autocomplete="off" required maxlength="200"
+                           class="field-input">
+                    <button type="submit" class="btn btn-primary">Create</button>
                 </form>
-                <p class="field-error" th:if="${deckError}" th:text="${deckError}"></p>
+                <p class="mt-1 text-sm text-danger" th:if="${deckError}" th:text="${deckError}"></p>
             </details>
 
             <form method="post" th:if="${!#lists.isEmpty(decks)}"
                   th:attr="action=@{/decks/{id}/delete(id=${selectedDeckId})},
                            onsubmit=|return confirm('Delete &quot;${selectedDeck.name}&quot; and all ${selectedDeck.cardCount} of its flashcards? This cannot be undone.')|">
                 <input type="hidden" name="order" th:value="${order}">
-                <button type="submit">Delete Deck</button>
+                <button type="submit" class="btn">Delete Deck</button>
             </form>
         </div>
 

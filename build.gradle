@@ -40,3 +40,36 @@ test {
     useJUnitPlatform()
     dependsOn 'cleanTest'
 }
+
+// Tailwind CSS is compiled with the standalone CLI (no Node/npm toolchain) and the
+// output is committed like any other static asset - these tasks are a dev
+// convenience for regenerating it after editing src/main/tailwind/input.css or the
+// Thymeleaf templates, not a dependency of the default build/CI.
+def tailwindCliVersion = '4.3.3'
+def tailwindCli = layout.buildDirectory.file("tailwind-cli/tailwindcss-linux-x64")
+
+tasks.register('downloadTailwindCli') {
+    outputs.file(tailwindCli)
+    doLast {
+        def file = tailwindCli.get().asFile
+        if (!file.exists()) {
+            file.parentFile.mkdirs()
+            def url = "https://github.com/tailwindlabs/tailwindcss/releases/download/v${tailwindCliVersion}/tailwindcss-linux-x64"
+            logger.lifecycle("Downloading Tailwind CLI ${tailwindCliVersion} from ${url}")
+            new URL(url).withInputStream { input -> file.withOutputStream { it << input } }
+            file.setExecutable(true)
+        }
+    }
+}
+
+tasks.register('tailwindBuild', Exec) {
+    description = 'Compiles src/main/tailwind/input.css to src/main/resources/static/styles.css (Linux x64 only; ' +
+            'on another platform, download the matching standalone CLI from ' +
+            'https://github.com/tailwindlabs/tailwindcss/releases and run it with the same -i/-o arguments).'
+    dependsOn tasks.named('downloadTailwindCli')
+    inputs.file('src/main/tailwind/input.css')
+    inputs.dir('src/main/resources/templates')
+    outputs.file('src/main/resources/static/styles.css')
+    commandLine tailwindCli.get().asFile, '-i', 'src/main/tailwind/input.css',
+            '-o', 'src/main/resources/static/styles.css', '--minify'
+}
