@@ -60,8 +60,7 @@ body {
     max-width: 500px; /* Max width to maintain readability */
 }
 
-#deckSelect,
-#orderSelect,
+.deckbar select,
 .deckform input[type="text"] {
     font: inherit;
     padding: 8px 14px;
@@ -69,6 +68,50 @@ body {
     border: 1px solid var(--color-border);
     background-color: var(--color-surface);
     color: var(--color-text);
+}
+
+.deck-details {
+    position: relative;
+}
+
+.deck-details summary {
+    font: inherit;
+    padding: 10px 18px;
+    border-radius: 999px;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    cursor: pointer;
+    list-style: none;
+}
+
+.deck-details summary::-webkit-details-marker {
+    display: none;
+}
+
+.deck-details summary:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.deck-details .deckform {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    z-index: 1;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 10px;
+    box-shadow: var(--shadow-card);
+    flex-wrap: nowrap;
+    width: max-content;
+}
+
+.field-error {
+    margin: 4px 0 0;
+    font-size: 0.8rem;
+    color: var(--color-danger);
 }
 
 .flashcard {
@@ -113,19 +156,37 @@ body {
     color: var(--color-text-muted);
 }
 
-#answer {
-    max-height: 300px;
-    opacity: 1;
-    overflow: hidden;
-    transition: max-height 0.3s ease, opacity 0.25s ease, margin 0.3s ease;
+.flashcard details {
+    margin-top: 4px;
 }
 
-#answer.hidden {
-    display: block; /* #answer's higher specificity overrides .hidden so the collapse can animate instead of vanishing instantly */
-    max-height: 0;
-    opacity: 0;
-    margin-bottom: 0;
-    pointer-events: none;
+.flashcard details summary {
+    display: inline-flex;
+    font: inherit;
+    padding: 10px 18px;
+    border-radius: 999px;
+    border: 1px solid var(--color-primary);
+    background-color: var(--color-primary);
+    color: #fff;
+    cursor: pointer;
+    list-style: none;
+}
+
+.flashcard details summary::-webkit-details-marker {
+    display: none;
+}
+
+.flashcard details summary:hover {
+    background-color: var(--color-primary-hover);
+    border-color: var(--color-primary-hover);
+}
+
+.flashcard details[open] summary {
+    margin-bottom: 16px;
+}
+
+.flashcard details p {
+    margin: 0 0 16px;
 }
 
 .navbuttoncontainer,
@@ -141,8 +202,8 @@ body {
 
 .navbuttoncontainer {
     justify-content: space-between; /* Space buttons evenly */
-    flex-wrap: nowrap; /* Keep Previous/Reveal Answer/Next on one row */
-    max-width: 420px; /* Wide enough to fit all three buttons without wrapping */
+    flex-wrap: nowrap;
+    max-width: 260px; /* Wide enough to fit Previous/Next without wrapping */
     gap: 8px;
 }
 
@@ -187,7 +248,6 @@ button:disabled {
     transform: none;
 }
 
-#revealButton,
 #add,
 #edit {
     background-color: var(--color-primary);
@@ -195,7 +255,6 @@ button:disabled {
     color: #fff;
 }
 
-#revealButton:hover,
 #add:hover,
 #edit:hover {
     background-color: var(--color-primary-hover);
@@ -228,8 +287,4 @@ button:disabled {
     background-color: var(--color-success-hover);
     border-color: var(--color-success-hover);
     color: #fff;
-}
-
-.hidden {
-    display: none;
 }

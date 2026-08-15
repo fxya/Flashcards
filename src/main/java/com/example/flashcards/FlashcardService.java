@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -30,6 +31,29 @@ public class FlashcardService {
             case "study" -> orderForStudy(repository.findByDeckId(deckId));
             default -> repository.findByDeckIdOrderById(deckId);
         };
+    }
+
+    /**
+     * Re-fetches a fixed sequence of flashcards by id, preserving that exact order and
+     * dropping any id that no longer exists. Used to redisplay a study-session queue
+     * (computed once) with live content/status on every subsequent request, without
+     * re-sorting it.
+     */
+    public List<Flashcard> getFlashcardsById(List<Long> ids) {
+        if (ids.isEmpty()) {
+            return List.of();
+        }
+        Map<Long, Flashcard> byId = new HashMap<>();
+        repository.findAllById(ids).forEach(f -> byId.put(f.getId(), f));
+
+        List<Flashcard> ordered = new ArrayList<>(ids.size());
+        for (Long id : ids) {
+            Flashcard flashcard = byId.get(id);
+            if (flashcard != null) {
+                ordered.add(flashcard);
+            }
+        }
+        return ordered;
     }
 
     private List<Flashcard> shuffled(List<Flashcard> flashcards) {

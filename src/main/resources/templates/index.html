@@ -5,51 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flashcards</title>
     <link rel="stylesheet" type="text/css" href="/styles.css">
+    <script src="/vendor/htmx.min.js" defer></script>
 </head>
 <body>
     <main class="container">
         <div class="deckbar">
-            <select id="deckSelect"></select>
-            <button id="newDeckButton" type="button">New Deck</button>
-            <button id="deleteDeckButton" type="button">Delete Deck</button>
-        </div>
-        <div id="newDeckForm" class="deckform hidden">
-            <input id="newDeckName" type="text" placeholder="Deck name" autocomplete="off">
-            <button id="createDeckButton" type="button">Create</button>
-            <button id="cancelDeckButton" type="button">Cancel</button>
+            <form method="get" action="/flashcards" id="deckSwitchForm">
+                <select name="deckId" onchange="this.form.submit()" th:disabled="${#lists.isEmpty(decks)}">
+                    <option th:if="${#lists.isEmpty(decks)}" value="">No decks</option>
+                    <option th:each="d : ${decks}"
+                            th:value="${d.id}"
+                            th:selected="${d.id == selectedDeckId}"
+                            th:text="${d.name + ' (' + d.cardCount + ')'}"></option>
+                </select>
+                <select name="order" onchange="this.form.submit()" th:disabled="${#lists.isEmpty(decks)}">
+                    <option value="study" th:selected="${order == 'study'}">Study order</option>
+                    <option value="shuffle" th:selected="${order == 'shuffle'}">Shuffle</option>
+                    <option value="natural" th:selected="${order == 'natural'}">In order</option>
+                </select>
+            </form>
+
+            <details class="deck-details">
+                <summary>New Deck</summary>
+                <form method="post" action="/decks" class="deckform">
+                    <input type="hidden" name="deckId" th:value="${selectedDeckId}">
+                    <input type="hidden" name="order" th:value="${order}">
+                    <input type="text" name="name" placeholder="Deck name" autocomplete="off" required maxlength="200">
+                    <button type="submit">Create</button>
+                </form>
+                <p class="field-error" th:if="${deckError}" th:text="${deckError}"></p>
+            </details>
+
+            <form method="post" th:if="${!#lists.isEmpty(decks)}"
+                  th:attr="action=@{/decks/{id}/delete(id=${selectedDeckId})},
+                           onsubmit=|return confirm('Delete &quot;${selectedDeck.name}&quot; and all ${selectedDeck.cardCount} of its flashcards? This cannot be undone.')|">
+                <input type="hidden" name="order" th:value="${order}">
+                <button type="submit">Delete Deck</button>
+            </form>
         </div>
 
-        <section class="flashcard">
-            <h3>Question</h3>
-            <p id="question">Loading...</p>
-            <h3>Answer</h3>
-            <p id="answer" class="hidden">Loading...</p>
-        </section>
-        <p id="progress" class="progress"></p>
-        <div id="navbuttoncontainer" class="navbuttoncontainer">
-            <button id="prevButton" type="button">Previous</button>
-            <button id="revealButton" type="button">Reveal Answer</button>
-            <button id="nextButton" type="button">Next</button>
-        </div>
-        <div id="reviewButtons" class="reviewbuttoncontainer hidden">
-            <button id="unknownButton" type="button">Still Learning</button>
-            <button id="knownButton" type="button">I Knew It</button>
-        </div>
-        <div class="buttoncontainer">
-            <select id="orderSelect">
-                <option value="study">Study order</option>
-                <option value="shuffle">Shuffle</option>
-                <option value="natural">In order</option>
-            </select>
-            <button id="addFlashcard" type="button">Add Flashcard</button>
-            <button id="editFlashcard" type="button">Edit Flashcard</button>
-            <button id="deleteFlashcard" type="button">Delete Flashcard</button>
-            <button id="add" type="button" class="hidden">Add</button>
-            <button id="edit" type="button" class="hidden">Edit</button>
-            <button id="delete" type="button" class="hidden">Delete</button>
-            <button id="undo" type="button" class="hidden">Undo</button>
-        </div>
+        <div th:replace="~{fragments/study :: study}"></div>
     </main>
-    <script type="module" src="/flashcards.js"></script>
 </body>
 </html>

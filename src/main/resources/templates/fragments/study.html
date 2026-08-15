@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="study" id="study" hx-target="#study" hx-swap="outerHTML" hx-include="#studyForm">
+    <form id="studyForm">
+        <input type="hidden" name="deckId" th:value="${deckId}">
+        <input type="hidden" name="order" th:value="${order}">
+        <input type="hidden" name="queue" th:value="${queueParam}">
+        <input type="hidden" name="index" th:value="${index}">
+
+        <section class="flashcard">
+            <h3>Question</h3>
+            <p th:if="${hasDeck and mode != 'add' and mode != 'edit'}"
+               th:text="${currentFlashcard != null ? currentFlashcard.question : 'No flashcards. Add one below.'}"></p>
+            <p th:unless="${hasDeck}">No decks yet. Create one above to get started.</p>
+            <input th:if="${hasDeck and (mode == 'add' or mode == 'edit')}" type="text" name="question" th:value="${formQuestion}">
+            <p class="field-error" th:if="${errors != null and errors.question != null}" th:text="${errors.question}"></p>
+
+            <h3>Answer</h3>
+            <details th:if="${hasDeck and mode == 'view' and currentFlashcard != null}">
+                <summary>Reveal Answer</summary>
+                <p th:text="${currentFlashcard.answer}"></p>
+                <div class="reviewbuttoncontainer">
+                    <button type="button" id="unknownButton"
+                            th:attr="hx-post=@{/flashcards/{id}/review(id=${currentFlashcard.id})}"
+                            hx-vals="{&quot;status&quot;:&quot;UNKNOWN&quot;}">Still Learning</button>
+                    <button type="button" id="knownButton"
+                            th:attr="hx-post=@{/flashcards/{id}/review(id=${currentFlashcard.id})}"
+                            hx-vals="{&quot;status&quot;:&quot;KNOWN&quot;}">I Knew It</button>
+                </div>
+            </details>
+            <p th:if="${hasDeck and mode == 'view' and currentFlashcard == null}"></p>
+            <input th:if="${hasDeck and (mode == 'add' or mode == 'edit')}" type="text" name="answer" th:value="${formAnswer}">
+            <p class="field-error" th:if="${errors != null and errors.answer != null}" th:text="${errors.answer}"></p>
+        </section>
+
+        <p class="progress" th:if="${hasDeck and !flashcards.isEmpty()}"
+           th:text="'Card ' + (${index} + 1) + ' of ' + ${flashcards.size()} + ' · ' + ${knownCount} + ' known'"></p>
+
+        <div class="navbuttoncontainer" th:if="${hasDeck and mode == 'view'}">
+            <button type="button" id="prevButton" th:disabled="${index <= 0}" hx-get="/flashcards/study/previous">Previous</button>
+            <button type="button" id="nextButton" th:disabled="${flashcards.isEmpty() or index >= flashcards.size() - 1}" hx-get="/flashcards/study/next">Next</button>
+        </div>
+
+        <div class="buttoncontainer" th:if="${hasDeck}">
+            <button type="button" id="addFlashcard" th:if="${mode == 'view'}"
+                    hx-get="/flashcards/study/mode" hx-vals="{&quot;mode&quot;:&quot;add&quot;}">Add Flashcard</button>
+            <button type="button" id="editFlashcard" th:if="${mode == 'view' and currentFlashcard != null}"
+                    hx-get="/flashcards/study/mode" hx-vals="{&quot;mode&quot;:&quot;edit&quot;}">Edit Flashcard</button>
+            <button type="button" id="deleteFlashcard" th:if="${mode == 'view' and currentFlashcard != null}"
+                    hx-get="/flashcards/study/mode" hx-vals="{&quot;mode&quot;:&quot;delete&quot;}">Delete Flashcard</button>
+
+            <button type="button" id="add" th:if="${mode == 'add'}" hx-post="/flashcards/study/create">Add</button>
+            <button type="button" id="edit" th:if="${mode == 'edit'}"
+                    th:attr="hx-post=@{/flashcards/{id}/edit(id=${currentFlashcard.id})}">Edit</button>
+            <button type="button" id="delete" th:if="${mode == 'delete'}"
+                    th:attr="hx-delete=@{/flashcards/{id}(id=${currentFlashcard.id})}">Delete</button>
+            <button type="button" id="undo" th:if="${mode != 'view'}"
+                    hx-get="/flashcards/study/mode" hx-vals="{&quot;mode&quot;:&quot;view&quot;}">Undo</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>
