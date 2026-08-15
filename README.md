@@ -1,5 +1,7 @@
 # Flashcards
-Simple flashcard app in Spring using Postgres for db and Thymeleaf for frontend template engine.
+Simple flashcard app in Spring Boot using Postgres for db and Thymeleaf for frontend template engine.
+
+Requires Java 21+.
 
 ## How to run
 1. Clone the repo
