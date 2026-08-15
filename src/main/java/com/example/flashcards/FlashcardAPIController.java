@@ -16,14 +16,15 @@ public class FlashcardAPIController {
         this.service = service;
     }
 
-    @GetMapping("/api/flashcards")
-    public List<Flashcard> getFlashcards(@RequestParam(defaultValue = "false") boolean shuffle) {
-        return service.getFlashcards(shuffle);
+    @GetMapping("/api/decks/{deckId}/flashcards")
+    public List<Flashcard> getFlashcards(@PathVariable Long deckId,
+                                          @RequestParam(defaultValue = "natural") String order) {
+        return service.getFlashcards(deckId, order);
     }
 
-    @PostMapping("/api/flashcards")
-    public Flashcard createFlashcard(@Valid @RequestBody Flashcard flashcard) {
-        return service.createFlashcard(flashcard);
+    @PostMapping("/api/decks/{deckId}/flashcards")
+    public Flashcard createFlashcard(@PathVariable Long deckId, @Valid @RequestBody Flashcard flashcard) {
+        return service.createFlashcard(deckId, flashcard);
     }
 
     @PutMapping("/api/flashcards/{id}")
@@ -34,6 +35,11 @@ public class FlashcardAPIController {
     @DeleteMapping("/api/flashcards/{id}")
     public void deleteFlashcard(@PathVariable Long id) {
         service.deleteFlashcard(id);
+    }
+
+    @PostMapping("/api/flashcards/{id}/review")
+    public Flashcard reviewFlashcard(@PathVariable Long id, @RequestBody ReviewRequest request) {
+        return service.reviewFlashcard(id, request.status());
     }
 
 }

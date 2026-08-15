@@ -2,4 +2,12 @@ package com.example.flashcards;
 
 import org.springframework.data.repository.CrudRepository;
 
-public interface FlashcardRepository extends CrudRepository<Flashcard, Long> { }
+import java.util.List;
+
+public interface FlashcardRepository extends CrudRepository<Flashcard, Long> {
+    List<Flashcard> findByDeckId(Long deckId);
+
+    List<Flashcard> findByDeckIdOrderById(Long deckId);
+
+    long countByDeckId(Long deckId);
+}

@@ -9,6 +9,8 @@
     --color-primary-hover: #2563eb;
     --color-danger: #dc2626;
     --color-danger-hover: #b91c1c;
+    --color-success: #16a34a;
+    --color-success-hover: #15803d;
     --shadow-card: 0 10px 30px rgba(15, 23, 42, 0.12);
     --shadow-card-hover: 0 14px 34px rgba(15, 23, 42, 0.16);
     --radius: 14px;
@@ -44,7 +46,29 @@ body {
     align-items: center;
     min-height: 100vh; /* Full height of the viewport */
     padding: 24px 16px;
-    gap: 4px;
+    gap: 10px;
+}
+
+.deckbar,
+.deckform {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    width: 90%; /* Make the deck controls width responsive */
+    max-width: 500px; /* Max width to maintain readability */
+}
+
+#deckSelect,
+#orderSelect,
+.deckform input[type="text"] {
+    font: inherit;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-surface);
+    color: var(--color-text);
 }
 
 .flashcard {
@@ -83,6 +107,12 @@ body {
     margin-bottom: 0;
 }
 
+.progress {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+}
+
 #answer {
     max-height: 300px;
     opacity: 1;
@@ -116,6 +146,16 @@ body {
     gap: 8px;
 }
 
+.reviewbuttoncontainer {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: 10px;
+    width: 90%; /* Make the button container width responsive */
+    max-width: 320px; /* Max width to maintain readability */
+    padding: 4px 0 0;
+}
+
 button {
     font: inherit;
     padding: 10px 18px;
@@ -141,6 +181,12 @@ button:focus-visible {
     outline-offset: 2px;
 }
 
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
 #revealButton,
 #add,
 #edit {
@@ -158,15 +204,29 @@ button:focus-visible {
 }
 
 #delete,
-#deleteFlashcard {
+#deleteFlashcard,
+#unknownButton {
     color: var(--color-danger);
     border-color: var(--color-danger);
 }
 
 #delete:hover,
-#deleteFlashcard:hover {
+#deleteFlashcard:hover,
+#unknownButton:hover {
     background-color: var(--color-danger);
     border-color: var(--color-danger-hover);
+    color: #fff;
+}
+
+#knownButton {
+    background-color: var(--color-success);
+    border-color: var(--color-success);
+    color: #fff;
+}
+
+#knownButton:hover {
+    background-color: var(--color-success-hover);
+    border-color: var(--color-success-hover);
     color: #fff;
 }
 

@@ -8,18 +8,39 @@
 </head>
 <body>
     <main class="container">
+        <div class="deckbar">
+            <select id="deckSelect"></select>
+            <button id="newDeckButton" type="button">New Deck</button>
+            <button id="deleteDeckButton" type="button">Delete Deck</button>
+        </div>
+        <div id="newDeckForm" class="deckform hidden">
+            <input id="newDeckName" type="text" placeholder="Deck name" autocomplete="off">
+            <button id="createDeckButton" type="button">Create</button>
+            <button id="cancelDeckButton" type="button">Cancel</button>
+        </div>
+
         <section class="flashcard">
             <h3>Question</h3>
             <p id="question">Loading...</p>
             <h3>Answer</h3>
             <p id="answer" class="hidden">Loading...</p>
         </section>
+        <p id="progress" class="progress"></p>
         <div id="navbuttoncontainer" class="navbuttoncontainer">
             <button id="prevButton" type="button">Previous</button>
             <button id="revealButton" type="button">Reveal Answer</button>
             <button id="nextButton" type="button">Next</button>
         </div>
+        <div id="reviewButtons" class="reviewbuttoncontainer hidden">
+            <button id="unknownButton" type="button">Still Learning</button>
+            <button id="knownButton" type="button">I Knew It</button>
+        </div>
         <div class="buttoncontainer">
+            <select id="orderSelect">
+                <option value="study">Study order</option>
+                <option value="shuffle">Shuffle</option>
+                <option value="natural">In order</option>
+            </select>
             <button id="addFlashcard" type="button">Add Flashcard</button>
             <button id="editFlashcard" type="button">Edit Flashcard</button>
             <button id="deleteFlashcard" type="button">Delete Flashcard</button>
