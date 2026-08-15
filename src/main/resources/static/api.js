@@ -1,4 +1,5 @@
-const BASE_URL = '/api/flashcards';
+const DECKS_URL = '/api/decks';
+const FLASHCARDS_URL = '/api/flashcards';
 
 async function request(url, options) {
     const response = await fetch(url, options);
@@ -12,12 +13,28 @@ async function request(url, options) {
     return response.json();
 }
 
-export function fetchFlashcards(shuffle = false) {
-    return request(`${BASE_URL}?shuffle=${shuffle}`);
+export function fetchDecks() {
+    return request(DECKS_URL);
 }
 
-export function createFlashcard(flashcard) {
-    return request(BASE_URL, {
+export function createDeck(name) {
+    return request(DECKS_URL, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({name})
+    });
+}
+
+export function deleteDeck(id) {
+    return request(`${DECKS_URL}/${id}`, {method: 'DELETE'});
+}
+
+export function fetchFlashcards(deckId, order = 'shuffle') {
+    return request(`${DECKS_URL}/${deckId}/flashcards?order=${order}`);
+}
+
+export function createFlashcard(deckId, flashcard) {
+    return request(`${DECKS_URL}/${deckId}/flashcards`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(flashcard)
@@ -25,7 +42,7 @@ export function createFlashcard(flashcard) {
 }
 
 export function updateFlashcard(id, flashcard) {
-    return request(`${BASE_URL}/${id}`, {
+    return request(`${FLASHCARDS_URL}/${id}`, {
         method: 'PUT',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(flashcard)
@@ -33,5 +50,5 @@ export function updateFlashcard(id, flashcard) {
 }
 
 export function deleteFlashcard(id) {
-    return request(`${BASE_URL}/${id}`, {method: 'DELETE'});
+    return request(`${FLASHCARDS_URL}/${id}`, {method: 'DELETE'});
 }

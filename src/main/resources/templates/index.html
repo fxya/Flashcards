@@ -8,6 +8,17 @@
 </head>
 <body>
     <main class="container">
+        <div class="deckbar">
+            <select id="deckSelect"></select>
+            <button id="newDeckButton" type="button">New Deck</button>
+            <button id="deleteDeckButton" type="button">Delete Deck</button>
+        </div>
+        <div id="newDeckForm" class="deckform hidden">
+            <input id="newDeckName" type="text" placeholder="Deck name" autocomplete="off">
+            <button id="createDeckButton" type="button">Create</button>
+            <button id="cancelDeckButton" type="button">Cancel</button>
+        </div>
+
         <section class="flashcard">
             <h3>Question</h3>
             <p id="question">Loading...</p>

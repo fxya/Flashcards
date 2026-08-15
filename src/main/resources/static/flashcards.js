@@ -1,5 +1,7 @@
 import * as api from './api.js';
 
+let decks = [];
+let currentDeckId = null;
 let flashcardList = [];
 let currentIndex = 0;
 
@@ -24,6 +26,12 @@ function convertToPTag(id) {
     element.replaceWith(p);
 }
 
+function setDeckSwitchingEnabled(enabled) {
+    document.getElementById('deckSelect').disabled = !enabled;
+    document.getElementById('newDeckButton').disabled = !enabled;
+    document.getElementById('deleteDeckButton').disabled = !enabled;
+}
+
 function prepareForInput() {
     convertToInputTag('question');
     convertToInputTag('answer');
@@ -32,6 +40,7 @@ function prepareForInput() {
     toggleVisible('addFlashcard', false);
     toggleVisible('editFlashcard', false);
     toggleVisible('deleteFlashcard', false);
+    setDeckSwitchingEnabled(false);
 }
 
 function restoreAfterInput() {
@@ -42,14 +51,77 @@ function restoreAfterInput() {
     toggleVisible('addFlashcard', true);
     toggleVisible('editFlashcard', true);
     toggleVisible('deleteFlashcard', true);
+    setDeckSwitchingEnabled(true);
+}
+
+function currentFlashcard() {
+    return flashcardList[currentIndex];
 }
 
 function renderCurrentFlashcard() {
-    const flashcard = flashcardList[currentIndex];
+    const flashcard = currentFlashcard();
     document.getElementById('question').textContent =
         flashcard ? flashcard.question : 'No flashcards. Add one below.';
     document.getElementById('answer').textContent = flashcard ? flashcard.answer : '';
     toggleVisible('answer', false);
+}
+
+function setNoDecksState() {
+    currentDeckId = null;
+    flashcardList = [];
+    currentIndex = 0;
+    document.getElementById('deckSelect').innerHTML = '';
+    document.getElementById('question').textContent = 'No decks yet. Create one above to get started.';
+    document.getElementById('answer').textContent = '';
+    toggleVisible('answer', false);
+    toggleVisible('navbuttoncontainer', false);
+    document.getElementById('addFlashcard').disabled = true;
+    document.getElementById('editFlashcard').disabled = true;
+    document.getElementById('deleteFlashcard').disabled = true;
+    document.getElementById('deleteDeckButton').disabled = true;
+}
+
+function populateDeckSelect() {
+    const select = document.getElementById('deckSelect');
+    select.innerHTML = '';
+    decks.forEach(deck => {
+        const option = document.createElement('option');
+        option.value = deck.id;
+        option.textContent = `${deck.name} (${deck.cardCount})`;
+        select.appendChild(option);
+    });
+    select.value = currentDeckId;
+}
+
+async function refreshDeckCounts() {
+    decks = await api.fetchDecks();
+    populateDeckSelect();
+}
+
+async function loadDecks(selectDeckId) {
+    decks = await api.fetchDecks();
+
+    if (decks.length === 0) {
+        setNoDecksState();
+        return;
+    }
+
+    const wanted = selectDeckId ?? currentDeckId;
+    currentDeckId = decks.some(deck => deck.id === wanted) ? wanted : decks[0].id;
+    populateDeckSelect();
+    toggleVisible('navbuttoncontainer', true);
+    document.getElementById('addFlashcard').disabled = false;
+    document.getElementById('editFlashcard').disabled = false;
+    document.getElementById('deleteFlashcard').disabled = false;
+    document.getElementById('deleteDeckButton').disabled = false;
+
+    await loadFlashcards();
+}
+
+async function loadFlashcards() {
+    flashcardList = await api.fetchFlashcards(currentDeckId);
+    currentIndex = 0;
+    renderCurrentFlashcard();
 }
 
 function handleAdd() {
@@ -60,11 +132,12 @@ function handleAdd() {
 function submitAdd() {
     const question = document.getElementById('question').value;
     const answer = document.getElementById('answer').value;
-    api.createFlashcard({question, answer})
+    api.createFlashcard(currentDeckId, {question, answer})
         .then(data => {
             flashcardList.push(data);
             currentIndex = flashcardList.length - 1;
             renderCurrentFlashcard();
+            return refreshDeckCounts();
         })
         .catch(error => console.error('Error adding flashcard:', error));
     restoreAfterInput();
@@ -79,7 +152,7 @@ function handleEdit() {
 function submitEdit() {
     const question = document.getElementById('question').value;
     const answer = document.getElementById('answer').value;
-    api.updateFlashcard(flashcardList[currentIndex].id, {question, answer})
+    api.updateFlashcard(currentFlashcard().id, {question, answer})
         .then(data => {
             flashcardList[currentIndex] = data;
             renderCurrentFlashcard();
@@ -95,11 +168,12 @@ function handleDelete() {
 }
 
 function submitDelete() {
-    api.deleteFlashcard(flashcardList[currentIndex].id)
+    api.deleteFlashcard(currentFlashcard().id)
         .then(() => {
             flashcardList.splice(currentIndex, 1);
             currentIndex = 0;
             renderCurrentFlashcard();
+            return refreshDeckCounts();
         })
         .catch(error => console.error('Error deleting flashcard:', error));
     restoreAfterInput();
@@ -132,6 +206,50 @@ function revealAnswer() {
     toggleVisible('answer', true);
 }
 
+function handleDeckChange(event) {
+    currentDeckId = Number(event.target.value);
+    loadFlashcards().catch(error => console.error('Error loading flashcards:', error));
+}
+
+function showNewDeckForm() {
+    toggleVisible('newDeckForm', true);
+    document.getElementById('newDeckName').focus();
+}
+
+function hideNewDeckForm() {
+    toggleVisible('newDeckForm', false);
+    document.getElementById('newDeckName').value = '';
+}
+
+function submitNewDeck() {
+    const name = document.getElementById('newDeckName').value.trim();
+    if (!name) {
+        return;
+    }
+    api.createDeck(name)
+        .then(deck => {
+            hideNewDeckForm();
+            return loadDecks(deck.id);
+        })
+        .catch(error => console.error('Error creating deck:', error));
+}
+
+function submitDeleteDeck() {
+    if (currentDeckId == null) {
+        return;
+    }
+    const deck = decks.find(d => d.id === currentDeckId);
+    const confirmed = window.confirm(
+        `Delete "${deck ? deck.name : 'this deck'}" and all ${deck ? deck.cardCount : 0} of its flashcards? This cannot be undone.`
+    );
+    if (!confirmed) {
+        return;
+    }
+    api.deleteDeck(currentDeckId)
+        .then(() => loadDecks())
+        .catch(error => console.error('Error deleting deck:', error));
+}
+
 function bindEventListeners() {
     document.getElementById('prevButton').addEventListener('click', showPrevious);
     document.getElementById('revealButton').addEventListener('click', revealAnswer);
@@ -143,16 +261,16 @@ function bindEventListeners() {
     document.getElementById('edit').addEventListener('click', submitEdit);
     document.getElementById('delete').addEventListener('click', submitDelete);
     document.getElementById('undo').addEventListener('click', handleUndo);
+    document.getElementById('deckSelect').addEventListener('change', handleDeckChange);
+    document.getElementById('newDeckButton').addEventListener('click', showNewDeckForm);
+    document.getElementById('cancelDeckButton').addEventListener('click', hideNewDeckForm);
+    document.getElementById('createDeckButton').addEventListener('click', submitNewDeck);
+    document.getElementById('deleteDeckButton').addEventListener('click', submitDeleteDeck);
 }
 
 function init() {
     bindEventListeners();
-    api.fetchFlashcards(true)
-        .then(data => {
-            flashcardList = data;
-            renderCurrentFlashcard();
-        })
-        .catch(error => console.error('Error loading flashcards:', error));
+    loadDecks().catch(error => console.error('Error loading decks:', error));
 }
 
 init();
