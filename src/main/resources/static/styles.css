@@ -111,7 +111,9 @@ body {
 
 .navbuttoncontainer {
     justify-content: space-between; /* Space buttons evenly */
-    max-width: 320px; /* Max width to maintain readability */
+    flex-wrap: nowrap; /* Keep Previous/Reveal Answer/Next on one row */
+    max-width: 420px; /* Wide enough to fit all three buttons without wrapping */
+    gap: 8px;
 }
 
 button {
