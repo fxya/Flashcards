@@ -33,7 +33,7 @@ class FlashcardServiceTest {
         when(flashcardRepository.findByDeckId(1L))
                 .thenReturn(new ArrayList<>(List.of(known, unseen, unknown)));
 
-        List<Flashcard> ordered = service.getFlashcards(1L, "study");
+        List<Flashcard> ordered = service.getFlashcards(1L, "study", null);
 
         assertThat(ordered).hasSize(3);
         assertThat(ordered.get(0).getStatus()).isEqualTo(ReviewStatus.UNKNOWN);
@@ -49,8 +49,23 @@ class FlashcardServiceTest {
         Flashcard b = new Flashcard("b", "b");
         when(flashcardRepository.findByDeckIdOrderById(1L)).thenReturn(new ArrayList<>(List.of(a, b)));
 
-        List<Flashcard> ordered = service.getFlashcards(1L, "natural");
+        List<Flashcard> ordered = service.getFlashcards(1L, "natural", null);
 
         assertThat(ordered).containsExactly(a, b);
+    }
+
+    @Test
+    void searchFiltersByQuestionOrAnswerCaseInsensitively() {
+        FlashcardService service = new FlashcardService(flashcardRepository, deckRepository);
+
+        Flashcard capital = new Flashcard("What is the capital of France?", "Paris");
+        Flashcard math = new Flashcard("2+2?", "4, obviously");
+        when(flashcardRepository.findByDeckIdOrderById(1L))
+                .thenReturn(new ArrayList<>(List.of(capital, math)));
+
+        assertThat(service.getFlashcards(1L, "natural", "CAPITAL")).containsExactly(capital);
+        assertThat(service.getFlashcards(1L, "natural", "obvious")).containsExactly(math);
+        assertThat(service.getFlashcards(1L, "natural", "")).containsExactly(capital, math);
+        assertThat(service.getFlashcards(1L, "natural", "nonexistent")).isEmpty();
     }
 }

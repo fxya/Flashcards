@@ -25,6 +25,11 @@ public class DeckService {
         return summaries;
     }
 
+    public Deck getDeck(Long id) {
+        return deckRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("No deck found with id " + id));
+    }
+
     public Deck createDeck(Deck deck) {
         return deckRepository.save(deck);
     }
