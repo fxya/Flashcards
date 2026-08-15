@@ -9,7 +9,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
@@ -26,32 +27,50 @@ class FlashcardAPIControllerTest {
     @MockitoBean
     private FlashcardRepository repository;
 
+    @MockitoBean
+    private DeckRepository deckRepository;
+
     @Autowired
     private ObjectMapper objectMapper; //for object to JSON conversion
 
     @Test
     void getFlashcards() throws Exception {
-        when(repository.findAll()).thenReturn(Arrays.asList(new Flashcard("question1", "answer1"), new Flashcard("question2", "answer2")));
+        when(repository.findByDeckId(1L)).thenReturn(new ArrayList<>(List.of(
+                new Flashcard("question1", "answer1"), new Flashcard("question2", "answer2"))));
 
-        mockMvc.perform(get("/api/flashcards"))
+        mockMvc.perform(get("/api/decks/1/flashcards"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.size()").value(2));
 
-        verify(repository, times(1)).findAll();
+        verify(repository, times(1)).findByDeckId(1L);
     }
 
     @Test
     void createFlashcard() throws Exception {
+        when(deckRepository.findById(1L)).thenReturn(Optional.of(new Deck("General")));
         Flashcard flashcard = new Flashcard("question", "answer");
         when(repository.save(any(Flashcard.class))).thenReturn(flashcard);
 
-        mockMvc.perform(post("/api/flashcards")
+        mockMvc.perform(post("/api/decks/1/flashcards")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(flashcard)))
                 .andExpect(status().isOk());
 
         verify(repository, times(1)).save(any(Flashcard.class));
+    }
+
+    @Test
+    void createFlashcard_returnsNotFoundForUnknownDeck() throws Exception {
+        when(deckRepository.findById(1L)).thenReturn(Optional.empty());
+        Flashcard flashcard = new Flashcard("question", "answer");
+
+        mockMvc.perform(post("/api/decks/1/flashcards")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(flashcard)))
+                .andExpect(status().isNotFound());
+
+        verify(repository, never()).save(any(Flashcard.class));
     }
 
     @Test
@@ -82,9 +101,10 @@ class FlashcardAPIControllerTest {
 
     @Test
     void createFlashcard_rejectsBlankFields() throws Exception {
+        when(deckRepository.findById(1L)).thenReturn(Optional.of(new Deck("General")));
         Flashcard flashcard = new Flashcard("", "");
 
-        mockMvc.perform(post("/api/flashcards")
+        mockMvc.perform(post("/api/decks/1/flashcards")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(flashcard)))
                 .andExpect(status().isBadRequest());

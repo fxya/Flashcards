@@ -10,20 +10,25 @@ import java.util.NoSuchElementException;
 public class FlashcardService {
 
     private final FlashcardRepository repository;
+    private final DeckRepository deckRepository;
 
-    public FlashcardService(FlashcardRepository repository) {
+    public FlashcardService(FlashcardRepository repository, DeckRepository deckRepository) {
         this.repository = repository;
+        this.deckRepository = deckRepository;
     }
 
-    public List<Flashcard> getFlashcards(boolean shuffle) {
-        var flashcards = (List<Flashcard>) repository.findAll();
+    public List<Flashcard> getFlashcards(Long deckId, boolean shuffle) {
+        var flashcards = repository.findByDeckId(deckId);
         if (shuffle) {
             Collections.shuffle(flashcards);
         }
         return flashcards;
     }
 
-    public Flashcard createFlashcard(Flashcard flashcard) {
+    public Flashcard createFlashcard(Long deckId, Flashcard flashcard) {
+        Deck deck = deckRepository.findById(deckId)
+                .orElseThrow(() -> new NoSuchElementException("No deck found with id " + deckId));
+        flashcard.setDeck(deck);
         return repository.save(flashcard);
     }
 
